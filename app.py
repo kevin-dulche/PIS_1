@@ -75,7 +75,7 @@ def login():
             flash('Has iniciado sesión correctamente', 'success')
             return redirect(url_for('index'))
         else:
-            flash('Usuario o contraseña incorrectos', 'error')
+            flash('Usuario y/o contraseña incorrectos', 'error')
     return render_template('login.html', form=form)
 
 @app.route('/logout')
@@ -86,4 +86,4 @@ def logout():
     return redirect(url_for('login'))
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5000, host='0.0.0.0')

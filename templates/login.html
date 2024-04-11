@@ -9,15 +9,16 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <!-- Bootstrap JS -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script type="text/javascript">
-        document.addEventListener('DOMContentLoaded', function() {
-            var mensajes = "{{ get_flashed_messages() }}"
-            var mensajesArray = JSON.parse(mensajes);
-            for (var i = 0; i < mensajesArray.length; i++) {
-                alert(mensajesArray[i]);
-            }
-        });
-    </script>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <script type="text/javascript">
+                document.addEventListener('DOMContentLoaded', function() {
+                    var mensaje = "{% for category, message in messages %}{{ message }}\n{% endfor %}";
+                    alert(mensaje);
+                });
+            </script>
+        {% endif %}
+    {% endwith %}
 </head>
 <body>
     <div class="container">
