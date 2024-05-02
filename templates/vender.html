@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel del Cajero - Otzo</title>
+  <!-- Enlaces a los archivos CSS de Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+  
+  <!-- Navbar de Bootstrap -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Otzo</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button> 
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto"> <!-- Alinea el contenido a la derecha -->
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#">Inicio</a>
+          </li>
+          <!-- <li class="nav-item">
+            <a class="nav-link" href="#">Link</a>
+          </li> -->
+          <li class="nav-item">
+            <a class="nav-link" href="/logout">Cerrar Sesión</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  
+<!-- Contenido del formulario de venta -->
+<div class="container my-5 mx-auto">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Agregar Producto al Carrito</h5>
+          <form method="POST" id="venta-form">
+            <div class="mb-3">
+              <label for="codigo-barras" class="form-label">Código de Barras</label>
+              <input type="number" class="form-control" id="codigo-barras" name="codigo-barras" required>
+              <label for="cantidad" class="form-label">Cantidad</label>
+              <input type="number" class="form-control" id="cantidad" name="cantidad" min="1" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Agregar Producto</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Contenido del carrito de compras -->
+<div class="container my-5 mx-auto">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Carrito de Compras</h5>
+          <form method="POST" id="carrito-form">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>Cantidad</th>
+                  <th>Precio Unitario</th>
+                  <th>Subtotal</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="carrito-body">
+                <!-- Aquí puedes iterar sobre los productos en el carrito y mostrarlos en filas de la tabla -->
+                <!-- Por ejemplo, usando un bucle de Jinja para iterar sobre una lista de productos en el carrito -->
+                {% for producto in carrito %}
+                <tr>
+                  <td>{{ producto.nombre }}</td>
+                  <td>{{ producto.cantidad }}</td>
+                  <td>{{ producto.precio }}</td>
+                  <td>{{ producto.cantidad * producto.precio }}</td>
+                  <td>
+                    <!-- Botones para modificar o eliminar productos del carrito -->
+                    <button type="button" class="btn btn-sm btn-primary" onclick="modificarProducto('{{ producto.id }}')">Modificar</button>
+                    <button type="button" class="btn btn-sm btn-danger" onclick="eliminarProducto('{{ producto.id }}')">Eliminar</button>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            <!-- Botón para finalizar la venta -->
+            <button type="submit" class="btn btn-success">Finalizar Venta</button>
+          </form>
+          <!-- Mostrar el total de la venta -->
+          <h5>Total: ${{ total }}</h5>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  
+  <!-- Enlaces a los archivos JS de Bootstrap -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    // Define la variable global carrito y asegúrate de que esté poblada con los datos correctos
+    var carrito = {{ carrito | tojson | safe }};
+    var total = {{ total }};
+  
+    // Función para modificar un producto en el carrito
+    function modificarProducto(productoId) {
+      // Implementa la lógica para modificar el producto en el carrito
+      console.log('Modificando producto con ID:', productoId);
+    }
+  
+    // Función para eliminar un producto del carrito
+    function eliminarProducto(productoId) {
+      // Buscar el índice del producto en el carrito
+      var index = -1;
+      for (var i = 0; i < carrito.length; i++) {
+        if (carrito[i].id === productoId) {
+          index = i;
+          break;
+        }
+      }
+      
+      // Verificar si se encontró el producto en el carrito
+      if (index !== -1) {
+        // Eliminar el producto del carrito
+        carrito.splice(index, 1);
+        
+        // Actualizar la vista para reflejar el cambio
+        actualizarVistaCarrito();
+        
+        // Puedes también enviar una solicitud al servidor para eliminar el producto de la base de datos si es necesario
+        
+        console.log('Producto eliminado del carrito:', productoId);
+      } else {
+        console.log('Producto no encontrado en el carrito:', productoId);
+      }
+    }
+    
+    function actualizarVistaCarrito() {
+      var carritoBody = document.getElementById('carrito-body');
+      carritoBody.innerHTML = ''; // Limpiar el contenido actual de la tabla
+      
+      // Volver a renderizar las filas de la tabla con los productos actualizados en el carrito
+      carrito.forEach(function(producto) {
+        var row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${producto.nombre}</td>
+          <td>${producto.cantidad}</td>
+          <td>${producto.precio}</td>
+          <td>${producto.cantidad * producto.precio}</td>
+          <td>
+            <button type="button" class="btn btn-sm btn-primary" onclick="modificarProducto('${producto.id}')">Modificar</button>
+            <button type="button" class="btn btn-sm btn-danger" onclick="eliminarProducto('${producto.id}')">Eliminar</button>
+          </td>
+        `;
+        carritoBody.appendChild(row);
+      });
+    }
+  
+    // Función para agregar un nuevo producto al carrito
+    function agregarProducto() {
+      // Implementa la lógica para agregar un nuevo producto al carrito
+      console.log('Agregando nuevo producto al carrito');
+    }
+  </script>
+  
+</body>
+</html>

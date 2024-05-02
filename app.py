@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, flash, request
+from flask import Flask, render_template, redirect, url_for, flash, request, session, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
@@ -24,6 +24,14 @@ class LoginForm(FlaskForm):
     username = StringField('Nombre de usuario', validators=[DataRequired()])
     password = PasswordField('Contraseña', validators=[DataRequired()])
     submit = SubmitField('Iniciar sesión')
+
+# Modelo de producto
+class Productos(db.Model):
+    id = db.Column(db.String(100), primary_key=True, nullable=False)  # Utiliza el código de barras como clave primaria
+    nombre = db.Column(db.String(100), nullable=False, unique=True)
+    precio = db.Column(db.Float, nullable=False)
+    cantidad_disponible = db.Column(db.Integer, nullable=False)
+
 
 # Configuramos el manejador de inicio de sesión
 @login_manager.user_loader
@@ -82,6 +90,51 @@ def logout():
     logout_user()
     flash('Has cerrado sesión correctamente', 'success')
     return redirect(url_for('login'))
+
+
+@app.route('/vender', methods=['GET', 'POST'])
+@login_required
+def vender():
+    # Obtener el carrito de la sesión o crear uno nuevo si no existe
+    carrito = session.get('carrito', [])
+    total = session.get('total', 0)
+    
+    if request.method == 'POST':
+        # Obtener los datos del formulario
+        producto_id = request.form['codigo-barras']
+        cantidad = int(request.form['cantidad'])
+        
+        # Buscar el producto en la base de datos
+        producto = Productos.query.get(producto_id)
+        
+        if producto:
+            # Verificar si hay suficiente cantidad en inventario
+            if producto.cantidad_disponible >= cantidad:
+                # Calcular el subtotal del producto
+                subtotal = producto.precio * cantidad
+                
+                # Agregar el producto al carrito
+                carrito.append({'id': producto.id, 'nombre': producto.nombre, 'cantidad': cantidad, 'precio': producto.precio, 'subtotal': subtotal})
+                
+                # Actualizar el total de la venta
+                total += subtotal
+                
+                # Actualizar el inventario del producto
+                producto.cantidad_disponible -= cantidad
+                db.session.commit()
+                
+                # Guardar el carrito en la sesión
+                session['carrito'] = carrito
+                session['total'] = total
+                
+                return jsonify({'success': 'Producto agregado al carrito'})
+            else:
+                return jsonify({'error': 'No hay suficiente cantidad en inventario'})
+        else:
+            return jsonify({'error': 'El producto no existe'})
+    
+    return render_template('vender.html', carrito=carrito, total=total)
+
 
 # Manejador para errores 404
 @app.errorhandler(404)
