@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Usuarios - Otzo</title>
+    <!-- Enlaces a los archivos CSS de Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<!-- Navbar de Bootstrap -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Otzo</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto"> <!-- Alinea el contenido a la derecha -->
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="/admin_dashboard"> Regresar al Inicio</a>
+        </li> 
+        <li class="nav-item">
+          <a class="nav-link" href="/logout">Cerrar Sesión</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Contenido de tu página -->
+<div class="container my-5">
+  <h2 class="mb-4 text-center">Gestión de Usuarios</h2>
+
+  <div class="row align-items-center text-center">
+    <div class="col-md-4">
+      <div class="card" style="width: 18rem;">
+        <div class="card-body">
+          <h3 class="card-title fw-bold">Agregar Usuario</h3>
+          <p class="card-text text-muted">Agregar un nuevo usuario al sistema.</p>
+          <a href="/agregar_usuario" class="btn btn-primary">Agregar Usuario</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card" style="width: 18rem;">
+        <div class="card-body">
+          <h3 class="card-title fw-bold">Modificar Usuario</h3>
+          <p class="card-text text-muted">Modificar la información de un usuario existente.</p>
+          <a href="/modificar_usuario" class="btn btn-primary">Modificar Usuario</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card" style="width: 18rem;">
+        <div class="card-body">
+          <h3 class="card-title fw-bold">Eliminar Usuario</h3>
+          <p class="card-text text-muted">Eliminar un usuario del sistema.</p>
+          <a href="/eliminar_usuario" class="btn btn-primary">Eliminar Usuario</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- Botón para mostrar/ocultar la tabla de usuarios -->
+  <div class="row justify-content-center">
+    <div class="col-md-4 text-center">
+      <button id="toggleUserTableBtn" class="btn btn-primary btn-lg mb-3">Tabla de Usuarios</button>
+    </div>
+  </div>
+
+  <style>
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+
+  <!-- Cuadro con la tabla de usuarios (inicialmente oculto) -->
+  <div class="row mt-4" id="userTableContainer" style="display: none;">
+    <div class="col-md-12">
+      <div class="card fadeIn">
+        <div class="card-body">
+          <h5 class="card-title">Usuarios Registrados</h5>
+          <div class="text-end mb-3">
+            <button id="togglePasswordBtn" class="btn btn-primary">Mostrar Contraseñas</button>
+          </div>
+          <div class="table-responsive">
+            <table id="userTable" class="table table-bordered table-sm">
+              <thead>
+                <tr>
+                  <th>Usuario</th>
+                  <th id="passwordHeader">Contraseña (Oculto)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Aquí se insertarán las filas de la tabla con los datos de los usuarios -->
+                {% for usuario in usuarios %}
+                <tr>
+                  <td>{{ usuario.username }}</td>
+                  <td class="password">{{ usuario.password }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Enlaces a los archivos JS de Bootstrap y el script personalizado -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const toggleUserTableBtn = document.getElementById('toggleUserTableBtn');
+  const userTableContainer = document.getElementById('userTableContainer');
+  const togglePasswordBtn = document.getElementById('togglePasswordBtn');
+  const passwordHeader = document.getElementById('passwordHeader');
+  const passwords = document.querySelectorAll('.password');
+
+  let passwordsHidden = true;
+
+  passwords.forEach(password => {
+    password.dataset.original = password.textContent;
+    password.textContent = '*'.repeat(password.textContent.length);
+  });
+
+  toggleUserTableBtn.addEventListener('click', function() {
+    if (userTableContainer.style.display === 'none') {
+      userTableContainer.style.display = 'block';
+    } else {
+      userTableContainer.style.display = 'none';
+    }
+  });
+
+  togglePasswordBtn.addEventListener('click', function() {
+    passwordsHidden = !passwordsHidden;
+
+    if (passwordsHidden) {
+      passwordHeader.textContent = 'Contraseña (Oculto)';
+      passwords.forEach(password => {
+        password.textContent = '*'.repeat(password.textContent.length);
+      });
+    } else {
+      passwordHeader.textContent = 'Contraseña';
+      passwords.forEach(password => {
+        password.textContent = password.dataset.original;
+      });
+    }
+  });
+</script>
+</body>
+</html>
