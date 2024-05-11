@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Iniciar sesión</title>
+        <!-- Bootstrap CSS -->
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    </head>
+
+    <style>
+        body {
+            text-align: center;
+            padding: 150px;
+        }
+
+        h1 {
+            font-size: 50px;
+        }
+
+        body {
+            font: 20px Helvetica, sans-serif;
+            color: #333;
+        }
+
+        article {
+            display: block;
+            text-align: left;
+            width: 650px;
+            margin: 0 auto;
+        }
+
+        a {
+            color: #0016dc;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: #333;
+            text-decoration: none;
+        }
+    </style>
+    <body>
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                                <h4 class="text-center">Iniciar sesión</h4>
+                        </div>
+                        <div class="card-body">
+                            <form action="/" method="POST">
+                                <div class="form-group">
+                                    <label for="username">Nombre de usuario:</label>
+                                    <input type="text" class="form-control" id="username" name="username" required>
+                                    <label for="password">Contraseña:</label>
+                                    <input type="password" class="form-control" id="password" name="password" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-block">Iniciar sesión</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bootstrap JS (opcional, para algunas funcionalidades) -->
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        {% if error %}
+            <script>
+                alert("{{ error }}");
+            </script>
+        {% endif %}
+    </body>
+</html>
+

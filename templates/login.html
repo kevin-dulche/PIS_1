@@ -1,48 +1,203 @@
-<!DOCTYPE html>
+<!-- Define que el documento esta bajo el estandar de HTML 5 -->
+<!doctype html>
+
+<!-- Representa la raíz de un documento HTML o XHTML. Todos los demás elementos deben ser descendientes de este elemento. -->
 <html lang="es">
+    
     <head>
-        <meta charset="UTF-8">
-        <title>Iniciar sesión</title>
-        <!-- Bootstrap CSS -->
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-        <!-- jQuery -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <!-- Bootstrap JS -->
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <script type="text/javascript">
-                    document.addEventListener('DOMContentLoaded', function() {
-                        var mensaje = "{% for category, message in messages %}{{ message }}\n{% endfor %}";
-                        alert(mensaje);
-                    });
-                </script>
-            {% endif %}
-        {% endwith %}
+        
+        <meta charset="utf-8">
+        
+        <title> Formulario de Acceso </title>    
+        
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="author" content="Videojuegos & Desarrollo">
+        <meta name="description" content="Muestra de un formulario de acceso en HTML y CSS">
+        <meta name="keywords" content="Formulario Acceso, Formulario de LogIn">
+        
+        
+        <style type="text/css">
+            body {
+                font-family: 'Overpass', sans-serif;
+                font-weight: normal;
+                font-size: 100%;
+                color: #1b262c;
+                
+                
+                margin: 0;
+                background-color: #0f4c75;
+            }
+            
+            #login label {
+            font-family: 'Arial', sans-serif; 
+            font-size: 14px;
+            color: #fff;
+            }
+
+            
+            #contenedor {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                
+                margin: 0;
+                padding: 0;
+                min-width: 100vw;
+                min-height: 100vh;
+                width: 100%;
+                height: 100%;
+            }
+            
+            #central {
+                max-width: 320px;
+                width: 100%;
+            }
+            
+            .titulo {
+                font-size: 250%;
+                color:#bbe1fa;
+                text-align: center;
+                margin-bottom: 20px;
+            }
+            
+            #login {
+                width: 100%;
+                padding: 50px 30px;
+                background-color: #3282b8;
+                height: 100%;
+                -webkit-box-shadow: 0px 0px 5px 5px rgba(0,0,0,0.15);
+                -moz-box-shadow: 0px 0px 5px 5px rgba(0,0,0,0.15);
+                box-shadow: 0px 0px 5px 5px rgba(0,0,0,0.15);
+                
+                border-radius: 3px 3px 3px 3px;
+                -moz-border-radius: 3px 3px 3px 3px;
+                -webkit-border-radius: 3px 3px 3px 3px;
+                
+                box-sizing: border-box;
+            }
+            
+            #login input {
+                font-family: 'Overpass', sans-serif;
+                font-size: 110%;
+                color: #1b262c;
+                
+                display: block;
+                width: 100%;
+                height: 40px;
+                
+                margin-bottom: 10px;
+                padding: 5px 5px 5px 10px;
+                
+                box-sizing: border-box;
+                
+                border: none;
+                border-radius: 3px 3px 3px 3px;
+                -moz-border-radius: 3px 3px 3px 3px;
+                -webkit-border-radius: 3px 3px 3px 3px;
+            }
+            
+            #login input::placeholder {
+                font-family: 'Overpass', sans-serif;
+                color: #E4E4E4;
+            }
+            
+            #login button {
+                font-family: 'Overpass', sans-serif;
+                font-size: 110%;
+                color:#1b262c;
+                width: 100%;
+                height: 40px;
+                border: none;
+                
+                border-radius: 3px 3px 3px 3px;
+                -moz-border-radius: 3px 3px 3px 3px;
+                -webkit-border-radius: 3px 3px 3px 3px;
+                
+                background-color: #bbe1fa;
+                
+                margin-top: 10px;
+            }
+            
+            #login button:hover {
+                background-color: #0f4c75;
+                color:#bbe1fa;
+            }
+            
+            .pie-form {
+                font-size: 90%;
+                text-align: center;    
+                margin-top: 15px;
+            }
+            
+            .pie-form a {
+                display: block;
+                text-decoration: none;
+                color: #bbe1fa;
+                margin-bottom: 3px;
+            }
+            
+            .pie-form a:hover {
+                color: #0f4c75;
+            }
+            
+            .inferior {
+                margin-top: 10px;
+                font-size: 90%;
+                text-align: center;
+            }
+            
+            .inferior a {
+                display: block;
+                text-decoration: none;
+                color: #bbe1fa;
+                margin-bottom: 3px;
+            }
+            
+            .inferior a:hover {
+                color: #3282b8;
+            }
+            
+        </style>
+        
+        <script type="text/javascript">
+        
+        </script>
+        
     </head>
+    
     <body>
-        <div class="container">
-            <div class="row justify-content-center mt-5">
-                <div class="col-md-6">
-                    <div class="rounded p-4 bg-light">
-                        <h1 class="mb-4">Iniciar sesión</h1>
-                        <form method="POST">
-                            {{ form.hidden_tag() }}
-                            <div class="form-group">
-                                {{ form.username.label }}
-                                {{ form.username(class="form-control") }}
-                            </div>
-                            <div class="form-group">
-                                {{ form.password.label }}
-                                {{ form.password(class="form-control") }}
-                            </div>
-                            <div class="form-group">
-                                {{ form.submit(class="btn btn-primary btn-block") }}
-                            </div>
-                        </form>
+        
+        <div id="contenedor">
+            <div id="central">
+                <div id="login">
+                    <center><img src="{{url_for('static', filename='images/logootzo1.jpg')}}" class="card-img-top mx-1" style="max-width: 100px; height: 100px; margin-bottom: 2px;"></center>
+                    <div class="titulo">
+                        Iniciar sesion
                     </div>
+                    <div class="card-body">
+                            <form action="/" method="post">
+                                <div class="form-group">
+                                    <label for="username">Nombre de usuario:</label>
+                                    <input type="text" class="form-control" id="username" name="username" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="password">Contraseña:</label>
+                                    <input type="password" class="form-control" id="password" name="password" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-block">Iniciar sesión</button>
+                            </form>
+
+                    
                 </div>
+                
             </div>
         </div>
+        
+        {% if error %}
+            <script>
+                alert("{{ error }}");
+            </script>
+        {% endif %}
     </body>
 </html>

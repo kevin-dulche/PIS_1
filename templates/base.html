@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}OTZO{% endblock %}</title>
+    <!-- Enlaces a los archivos CSS de Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <header>
+        <!-- Aquí coloca el contenido del encabezado común a todas las páginas -->
+    </header>
+
+    <!-- Navbar de Bootstrap -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Otzo</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto"> <!-- Alinea el contenido a la derecha -->
+                    <!-- <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Inicio</a>
+                    </li> -->
+                    <!-- <li class="nav-item">
+                    <a class="nav-link" href="#">Link</a>
+                    </li> -->
+                    <!-- Aquí coloca la navegación común a todas las páginas -->
+                    {% block nav %}{% endblock %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">Cerrar Sesión</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <!-- Aquí coloca el contenido específico de cada página -->
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <!-- Aquí coloca el pie de página común a todas las páginas -->
+    </footer>
+    <!-- Bootstrap JS (opcional, para algunas funcionalidades) -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

@@ -1,139 +1,335 @@
-from flask import Flask, render_template, redirect, url_for, flash, request, session, jsonify
-from flask_sqlalchemy import SQLAlchemy
-from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import DataRequired
-from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
+import datetime
+from flask import Flask, abort, jsonify, render_template, request, redirect, url_for, session
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+import mysql.connector
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'tu_clave_secreta'  # Cambia esto por una clave segura en un entorno de producción
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:root@localhost/appflask'
-db = SQLAlchemy(app)
-login_manager = LoginManager(app)
-login_manager.login_view = 'login'
+app.secret_key = 'tu_clave_secreta'
 
-# Modelo de usuario
-class Login(UserMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True, nullable=False)
-    username = db.Column(db.String(50), unique=True, nullable=False)
-    password = db.Column(db.String(50), nullable=False)
-    role = db.Column(db.String(50), nullable=False)  # Agregamos el campo 'role'
-
-# Definimos el formulario de inicio de sesión
-class LoginForm(FlaskForm):
-    username = StringField('Nombre de usuario', validators=[DataRequired()])
-    password = PasswordField('Contraseña', validators=[DataRequired()])
-    submit = SubmitField('Iniciar sesión')
-
-# Modelo de producto
-class Productos(db.Model):
-    id = db.Column(db.String(100), primary_key=True, nullable=False)  # Utiliza el código de barras como clave primaria
-    nombre = db.Column(db.String(100), nullable=False, unique=True)
-    precio = db.Column(db.Float, nullable=False)
-    cantidad_disponible = db.Column(db.Integer, nullable=False)
+login_manager = LoginManager()
+login_manager.init_app(app)
 
 
-# Configuramos el manejador de inicio de sesión
+class Usuario(UserMixin):
+    def __init__(self, id:str, username:str, password:str, role:str):
+        self.id = id
+        self.username = username
+        self.password = password
+        self.role = role
+
+    
+class Producto:
+    def __init__(self, id:str, nombre:str, precio:str, cantidad_disponible:int):
+        self.codigo_barras = id
+        self.nombre = nombre
+        self.precio = precio
+        self.existencia = cantidad_disponible
+
+
 @login_manager.user_loader
 def load_user(user_id):
-    return Login.query.get(int(user_id))
+    # Aquí deberías buscar y retornar el usuario desde tu base de datos utilizando el ID
+    # Por ejemplo, puedes usar una consulta SQL para buscar el usuario en la base de datos
+    conexion = mysql.connector.connect(
+        host='localhost',
+        user='root',
+        password='root',
+        database='appflask'
+    )
+    cursor = conexion.cursor()
 
-# Rutas de la aplicación
+    cursor.execute('SELECT * FROM login WHERE id = %s', (user_id,))
+    usuario_data = cursor.fetchone()
+
+    if usuario_data:
+        usuario = Usuario(usuario_data[0], usuario_data[1], usuario_data[2], usuario_data[3])
+        return usuario
+    else:
+        return None
+
+
 @app.route('/', methods=['GET', 'POST'])
-def login():
-    if current_user.is_authenticated:  # Si el usuario ya está autenticado, redirige a la página correspondiente
-        if current_user.role == 'Administrador':
-            return redirect(url_for('admin_dashboard'))
-        elif current_user.role == 'Cajero':
-            return redirect(url_for('cajero_dashboard'))
-        elif current_user.role == 'Cliente':
-            return redirect(url_for('cliente_dashboard'))
-
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = Login.query.filter_by(username=form.username.data, password=form.password.data).first()
-        if user:
-            login_user(user)
-            return redirect(url_for('login'))  # Redirecciona a la página correspondiente después del login
+def inicio():
+    error = None
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        
+        conexion = mysql.connector.connect(
+            host='localhost',
+            user='root',
+            password='root',
+            database='appflask'
+        )
+        cursor = conexion.cursor()
+        
+        cursor.execute('SELECT * FROM login WHERE username = %s AND password = %s', (username, password))
+        usuario_data = cursor.fetchone()
+        if usuario_data:
+            usuario = Usuario(usuario_data[0], usuario_data[1], usuario_data[2], usuario_data[3])
+            login_user(usuario)
+            cursor.close()
+            conexion.close()
+            
+            # Verificar el rol del usuario y redirigir a la página correspondiente
+            if usuario_data[3] == 'Administrador':
+                return redirect(url_for('admin_page'))
+            elif usuario_data[3] == 'Cajero':
+                return redirect(url_for('cajero_page'))
+            elif usuario_data[3] == 'Cliente':
+                return redirect(url_for('cliente_page'))
         else:
-            flash('Usuario y/o contraseña incorrectos', 'error')
-    return render_template('login.html', form=form)
+            cursor.close()
+            conexion.close()
+            error = 'Usuario y/o contraseña incorrectos'
+    return render_template('login.html', error=error)
 
 
-@app.route('/admin_dashboard')
+@app.route('/admin')
 @login_required
-def admin_dashboard():
-    if current_user.role != 'Administrador':
-        flash('Acceso denegado: no eres un administrador', 'error')
-        return redirect(url_for('login'))  # Redireccionar si el usuario no es administrador
-    return 'Panel de administrador'
+def admin_page():
+    if current_user.is_authenticated and current_user.role == 'Administrador':
+        return render_template('admin.html')
+    else:
+        return abort(401, description="No tienes permisos para acceder a esta página.")
 
-@app.route('/cajero_dashboard')
-@login_required
-def cajero_dashboard():
-    if current_user.role != 'Cajero':
-        flash('Acceso denegado: no eres un cajero', 'error')
-        return redirect(url_for('login'))  # Redireccionar si el usuario no es cajero
-    return render_template('panelCajero.html')
 
-@app.route('/cliente_dashboard')
+@app.route('/cajero')
 @login_required
-def cliente_dashboard():
-    if current_user.role != 'Cliente':
-        flash('Acceso denegado: no eres un cliente', 'error')
-        return redirect(url_for('login'))  # Redireccionar si el usuario no es cliente
-    return 'Panel de cliente'
+def cajero_page():
+    verificar_rol_cajero()
+    return render_template('cajero.html')
+    
 
-@app.route('/logout')
+
+@app.route('/cliente')
 @login_required
-def logout():
-    logout_user()
-    flash('Has cerrado sesión correctamente', 'success')
-    return redirect(url_for('login'))
+def cliente_page():
+    if current_user.is_authenticated and current_user.role == 'Cliente':
+        return render_template('cliente.html')
+    else:
+        return abort(401, description="No tienes permisos para acceder a esta página.")
 
 
 @app.route('/vender', methods=['GET', 'POST'])
 @login_required
 def vender():
-    # Obtener el carrito de la sesión o crear uno nuevo si no existe
-    carrito = session.get('carrito', [])
-    total = session.get('total', 0)
-    
+    verificar_rol_cajero()
+    error = None
+    carrito = []
+    total = 0.0
+    if 'carrito' not in session:
+        session['carrito'] = []
     if request.method == 'POST':
-        # Obtener los datos del formulario
-        producto_id = request.form['codigo-barras']
+        
+        # Aquí deberías procesar la venta y guardar la información en la base de datos
+        # Por ejemplo, puedes obtener los datos del formulario y guardarlos en la base de datos
+        # utilizando una consulta SQL
+        codigo_barras = request.form['codigo-barras']
         cantidad = int(request.form['cantidad'])
+
+        # buscar el producto en la base de datos
+        conexion = mysql.connector.connect(
+            host='localhost',
+            user='root',
+            password='root',
+            database='appflask'
+        )
+
+        cursor = conexion.cursor()
         
-        # Buscar el producto en la base de datos
-        producto = Productos.query.get(producto_id)
-        
-        if producto:
-            # Verificar si hay suficiente cantidad en inventario
-            if producto.cantidad_disponible >= cantidad:
-                # Calcular el subtotal del producto
-                subtotal = producto.precio * cantidad
-                
-                # Agregar el producto al carrito
-                carrito.append({'id': producto.id, 'nombre': producto.nombre, 'cantidad': cantidad, 'precio': producto.precio, 'subtotal': subtotal})
-                
-                # Actualizar el total de la venta
-                total += subtotal
-                
-                # Actualizar el inventario del producto
-                producto.cantidad_disponible -= cantidad
-                db.session.commit()
-                
-                # Guardar el carrito en la sesión
+        cursor.execute('SELECT * FROM productos WHERE id = %s', (codigo_barras,))
+        producto_data = cursor.fetchone()
+
+        if producto_data:
+            producto = Producto(producto_data[0], producto_data[1], producto_data[2], producto_data[3])
+            cursor.close()
+            conexion.close()
+            carrito = session['carrito']
+            # Verificar si el producto ya está en el carrito
+            encontrado = False
+            for item in carrito:
+                if item['nombre'] == producto.nombre:
+                    encontrado = True
+                    cantidad_en_carrito = item['cantidad']
+                    cantidad_total = cantidad_en_carrito + cantidad
+                    if cantidad_total <= producto.existencia:
+                        item['cantidad'] = cantidad_total
+                        session['carrito'] = carrito
+                    else:
+                        error = 'No hay suficiente cantidad disponible, la cantidad máxima de ' + producto.nombre + ' es ' + str(producto.existencia)
+                        total = sum(producto['precio'] * producto['cantidad'] for producto in carrito)
+                        return render_template('vender.html', error=error, carrito=carrito, total=total, enumerate=enumerate)
+                    # error = 'El producto ya está en el carrito'
+                    total = sum(producto['precio'] * producto['cantidad'] for producto in carrito)
+                    return render_template('vender.html', error=error, carrito=carrito, total=total, enumerate=enumerate)
+            
+            # verificar si hay suficiente cantidad disponible
+            if producto.existencia >= cantidad:
+                # Ejemplo de cómo agregar un producto al carrito con nombre y precio
+                producto = {'nombre': producto.nombre, 'cantidad': cantidad, 'precio': producto.precio}
+                carrito = session['carrito']
+                carrito.append(producto)
                 session['carrito'] = carrito
-                session['total'] = total
+                total = sum(producto['precio'] * producto['cantidad'] for producto in carrito)
+                total = round(total, 2)
                 
-                return jsonify({'success': 'Producto agregado al carrito'})
             else:
-                return jsonify({'error': 'No hay suficiente cantidad en inventario'})
+                error = 'No hay suficiente cantidad disponible, la cantidad máxima de ' + producto.nombre + ' es ' + str(producto.existencia)
         else:
-            return jsonify({'error': 'El producto no existe'})
+            cursor.close()
+            conexion.close()
+            carrito = session['carrito']
+            total = sum(producto['precio'] * producto['cantidad'] for producto in carrito)
+            total = round(total, 2)
+            error = 'Producto no encontrado'
+    carrito = session['carrito']
+    total = sum(producto['precio'] * producto['cantidad'] for producto in carrito)
+    return render_template('vender.html', error=error, carrito=carrito, total=total, enumerate=enumerate)
+
+
+@app.route('/limpiar_carrito', methods=['GET'])
+@login_required
+def limpiar_carrito():
+    verificar_rol_cajero()
+    if 'carrito' in session:
+        # Vaciar el carrito en la sesión del usuario
+        session['carrito'] = []
+    return redirect(url_for('vender'))  # Redirige de vuelta a la página de vender después de limpiar el carrito
+
+
+@app.route('/delete/<int:index>', methods=['GET'])
+@login_required
+def delete_from_cart(index):
+    verificar_rol_cajero()
+    if 'carrito' in session:
+        carrito = session['carrito']
+        if 0 <= index < len(carrito):
+            del carrito[index]  # Elimina el producto del carrito en el índice especificado
+            session['carrito'] = carrito
+    return redirect(url_for('vender'))  # Redirige de vuelta a la página de vender después de eliminar
+
+
+@app.route('/update/<int:index>', methods=['GET', 'POST'])
+@login_required
+def update_from_cart(index):
+    verificar_rol_cajero()
+    if request.method == 'GET':
+        if 'carrito' in session:
+            carrito = session['carrito']
+            if 0 <= index < len(carrito):
+                producto = carrito[index]
+                return render_template('update.html', producto=producto, index=index)
+        # Si el producto no se encuentra en el carrito o la sesión del carrito no está disponible, redirecciona al usuario a otra página.
+        return redirect(url_for('vender'))
+    else:
+        if 'carrito' in session:
+            carrito = session['carrito']
+            if 0 <= index < len(carrito):
+                producto = carrito[index]
+                cantidad = int(request.form['cantidad'])
+                # # verificar si hay suficiente cantidad disponible
+                conexion = mysql.connector.connect(
+                    host='localhost',
+                    user='root',
+                    password='root',
+                    database='appflask'
+                )
+
+                cursor = conexion.cursor()
+
+                cursor.execute('SELECT * FROM productos WHERE nombre = %s', (producto['nombre'],))
+
+                producto_data = cursor.fetchone()
+
+                if producto_data:
+                    producto = Producto(producto_data[0], producto_data[1], producto_data[2], producto_data[3])
+                    cursor.close()
+                    conexion.close()
+
+                    if producto.existencia >= cantidad:
+                        carrito[index]['cantidad'] = cantidad
+                        session['carrito'] = carrito
+                    else:
+                        error = 'No hay suficiente cantidad disponible, la cantidad máxima de ' + producto.nombre + ' es ' + str(producto.existencia)
+                        return render_template('update.html', producto=producto, index=index, error=error)
+                else:
+                    cursor.close()
+                    conexion.close()
+        return redirect(url_for('vender'))
+
+
+@app.route('/finalizar_venta', methods=['GET'])
+@login_required
+def finalizar_venta():
+    verificar_rol_cajero()
+    carrito = session['carrito']
+    if carrito == []:
+        error = 'No hay productos en el carrito'
+        return render_template('vender.html', error=error, carrito=carrito, total=0.0, enumerate=enumerate)
+    total = sum(producto['precio'] * producto['cantidad'] for producto in carrito)
+    total = round(total, 2)
+    return render_template('cobrar.html', total=total, carrito=carrito, enumerate=enumerate, cambio = 0.0)
+
+
+@app.route('/calcular_cambio', methods=['POST'])
+@login_required
+def calcular_cambio():
+    verificar_rol_cajero()
+    carrito = session['carrito']
+    total = sum(producto['precio'] * producto['cantidad'] for producto in carrito)
+    total = round(total, 2)
+    efectivo = float(request.form['monto_recibido'])
+    cambio = efectivo - total
+    return render_template('cobrar.html', total=total, carrito=carrito, enumerate=enumerate, cambio=cambio)
+
+@app.route('/fin_venta', methods=['GET'])
+@login_required
+def fin_venta():
+    verificar_rol_cajero()
+    carrito = session['carrito']
+    total = sum(producto['precio'] * producto['cantidad'] for producto in carrito)
+    total = round(total, 2)
+    # Aquí deberías procesar la venta y guardar la información en la base de datos
+    # Por ejemplo, puedes obtener los datos del formulario y guardarlos en la base de datos
+
+    # Ejemplo de cómo guardar la venta en la base de datos
+    conexion = mysql.connector.connect(
+            host='localhost',
+            user='root',
+            password='root',
+            database='appflask'
+        )
     
-    return render_template('vender.html', carrito=carrito, total=total)
+    cursor = conexion.cursor()
+    fecha_actual = datetime.datetime.now()
+    # Formatear la fecha y hora en el formato deseado
+    fecha_formateada = fecha_actual.strftime('%Y-%m-%d %H:%M:%S')
+    cursor.execute('INSERT INTO ventas (total, fecha) VALUES (%s, %s)', (total, fecha_formateada))
+    venta_id = cursor.lastrowid
+    for producto in carrito:
+        cursor.execute('INSERT INTO ventas_productos (venta_id, producto_id, cantidad, fecha) VALUES (%s, %s, %s, %s)', (venta_id, producto['nombre'], producto['cantidad'], fecha_formateada))
+        cursor.execute('UPDATE productos SET cantidad_disponible = cantidad_disponible - %s WHERE nombre = %s', (producto['cantidad'], producto['nombre']))
+    conexion.commit()
+    cursor.close()
+    conexion.close()
+    carrito = []
+    session['carrito'] = []
+    mensaje = 'Venta realizada con éxito'
+    return render_template('vender.html', mensaje=mensaje, carrito=carrito, total=0.0, enumerate=enumerate)
+
+# Ruta para cerrar sesión
+@app.route('/logout')
+@login_required
+def logout():
+    session.pop('carrito', None)
+    logout_user()
+    return redirect(url_for('inicio'))
+
+
+def verificar_rol_cajero():
+    if not current_user.is_authenticated or current_user.role != 'Cajero':
+        abort(401, description="No tienes permisos para acceder a esta página.")
 
 
 # Manejador para errores 404
@@ -141,5 +337,13 @@ def vender():
 def page_not_found(error):
     return render_template('404.html', url=request.url), 404
 
-if __name__ == '__main__':
+
+# Manejador para errores 401
+@app.errorhandler(401)
+def page_not_found(error):
+    logout_user()
+    return render_template('401.html', url=request.url), 401
+
+
+if __name__ == "__main__":
     app.run(debug=True, port=5000, host='0.0.0.0')

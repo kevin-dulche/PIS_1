@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block title %}Cobrar{% endblock %}
+
+{% block nav %}
+
+    <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="/vender">Regresar</a>
+    </li>
+
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Carrito de compras -->
+    <div class="container my-5 mx-auto">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Carrito de Compras</h5>
+                        <form method="POST" id="carrito-form">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th>Cantidad</th>
+                                        <th>Precio Unitario</th>
+                                        <th>Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="carrito-body">
+                                    <!-- Aquí puedes iterar sobre los productos en el carrito y mostrarlos en filas de la tabla -->
+                                    <!-- Por ejemplo, usando un bucle de Jinja para iterar sobre una lista de productos en el carrito -->
+                                    {% for index, producto in enumerate(carrito) %}
+                                    <tr>
+                                        <td>{{ producto.nombre }}</td>
+                                        <td>{{ producto.cantidad }}</td>
+                                        <td>{{ producto.precio }}</td>
+                                        <td>{{ producto.cantidad * producto.precio }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </form>
+                        <!-- Mostrar el total de la venta -->
+                        <h5>Total: ${{ total }}</h5>
+                        <!-- Enlace para limpiar el carrito -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="cobrar container mt-5">
+        <h2>Cobrar</h2>
+        <form action="/calcular_cambio" method="post" class="row">
+            <!-- Columna 1 -->
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="metodo">Método de pago:</label>
+                    <select name="metodo" id="metodo" class="form-control">
+                        <option value="efectivo">Efectivo</option>
+                        <option value="qr">QR</option>
+                    </select>
+                </div>
+                <div class="form-group" id="efectivo">
+                    <label for="monto">Monto recibido:</label>
+                    <div class="input-group">
+                        <input type="number" class="form-control" name="monto_recibido" id="monto_recibido" step="0.01" min="{{total}}" required>
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="submit">Calcular cambio</button>
+                        </div>
+                    </div>
+                    <p>Cambio: $<span id="cambio">{{ cambio }}</span></p>
+                </div>
+            </div>
+            <!-- Columna 2 -->
+            <div class="col-md-6">
+                <div class="form-group" id="qr" style="display: none;">
+                    <img src="../static/images/pagosQR.png" width="50%" alt="QR">
+                </div>
+            </div>
+            <!-- Botón de Finalizar -->
+            <div class="col-md-12">
+                <a href="/fin_venta" class="btn btn-success btn-lg btn-block" type="submit">Finalizar</a>
+            </div>
+        </form>
+    </div>
+    
+</div>
+
+<!-- Agrega tus scripts JavaScript -->
+<script>
+    // Manejar la visibilidad de los campos según el método de pago seleccionado
+    document.getElementById('metodo').addEventListener('change', function () {
+        var metodo = this.value;
+        if (metodo === 'efectivo') {
+            document.getElementById('efectivo').style.display = 'block';
+            document.getElementById('qr').style.display = 'none';
+        } else if (metodo === 'qr') {
+            document.getElementById('efectivo').style.display = 'none';
+            document.getElementById('qr').style.display = 'block';
+        }
+    });
+</script>
+
+{% endblock %}
