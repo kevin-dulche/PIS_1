@@ -1,5 +1,5 @@
 import datetime
-from flask import Flask, abort, jsonify, render_template, request, redirect, url_for, session
+from flask import Flask, abort, flash, jsonify, render_template, request, redirect, url_for, session
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 import mysql.connector
 
@@ -89,7 +89,7 @@ def inicio():
 @login_required
 def admin_page():
     if current_user.is_authenticated and current_user.role == 'Administrador':
-        return render_template('admin.html')
+        return render_template('panelAdmin.html')
     else:
         return abort(401, description="No tienes permisos para acceder a esta página.")
 
@@ -318,6 +318,53 @@ def fin_venta():
     mensaje = 'Venta realizada con éxito'
     return render_template('vender.html', mensaje=mensaje, carrito=carrito, total=0.0, enumerate=enumerate)
 
+@app.route('/gestion_usuario')
+@login_required
+def gestion_usuario():
+    verificar_rol_admin()
+    conexion = mysql.connector.connect(
+        host='localhost',
+        user='root',
+        password='root',
+        database='appflask'
+    )
+    cursor = conexion.cursor()
+    cursor.execute('SELECT * FROM login')
+    usuarios = cursor.fetchall()
+    cursor.close()
+    conexion.close()
+    return render_template('gestion_usuario.html', usuarios=usuarios)
+
+@app.route('/agregar_usuario', methods=['GET', 'POST'])
+@login_required
+def agregar_usuario():
+    verificar_rol_admin()
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        role = request.form['role']
+        conexion = mysql.connector.connect(
+            host='localhost',
+            user='root',
+            password='root',
+            database='appflask'
+        )
+        cursor = conexion.cursor()
+
+        # Verificar si ya está registrado el usuario
+        cursor.execute('SELECT * FROM login WHERE username = %s', (username,))
+        usuario_data = cursor.fetchone()
+        if usuario_data:
+            flash('El nombre de usuario ya existe', 'warning')
+            return render_template('agregar_usuario.html')
+        cursor.execute('INSERT INTO login (username, password, role) VALUES (%s, %s, %s)', (username, password, role))
+        conexion.commit()
+        cursor.close()
+        conexion.close()
+        flash('Usuario agregado correctamente', 'success')
+        return render_template('agregar_usuario.html')
+    return render_template('agregar_usuario.html')
+
 # Ruta para cerrar sesión
 @app.route('/logout')
 @login_required
@@ -329,6 +376,10 @@ def logout():
 
 def verificar_rol_cajero():
     if not current_user.is_authenticated or current_user.role != 'Cajero':
+        abort(401, description="No tienes permisos para acceder a esta página.")
+
+def verificar_rol_admin():
+    if not current_user.is_authenticated or current_user.role != 'Administrador':
         abort(401, description="No tienes permisos para acceder a esta página.")
 
 
