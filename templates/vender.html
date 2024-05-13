@@ -10,15 +10,15 @@
 {% block content %}
 
 {% if error %}
-    <script>
-        alert("{{ error }}");
-    </script>
+<script>
+    alert("{{ error }}");
+</script>
 {% endif %}
 
 {% if mensaje %}
-    <script>
-        alert("{{ mensaje }}");
-    </script>
+<script>
+    alert("{{ mensaje }}");
+</script>
 {% endif %}
 
 <!-- Contenido del formulario de venta -->
@@ -65,19 +65,21 @@
                                 <!-- Aquí puedes iterar sobre los productos en el carrito y mostrarlos en filas de la tabla -->
                                 <!-- Por ejemplo, usando un bucle de Jinja para iterar sobre una lista de productos en el carrito -->
                                 {% for index, producto in enumerate(carrito) %}
-                                    <tr>
-                                        <td>{{ producto.nombre }}</td>
-                                        <td>{{ producto.cantidad }}</td>
-                                        <td>{{ producto.precio }}</td>
-                                        <td>{{ producto.cantidad * producto.precio }}</td>
-                                        <td>
-                                            <!-- Botones para modificar o eliminar productos del carrito -->
-                                            <div class="btn-group" role="group" aria-label="Acciones">
-                                                    <a href="/update/{{ index }}" class="btn btn-sm btn-primary mx-1">Modificar</a>
-                                                    <a href="/delete/{{ index }}" class="btn btn-sm btn-danger">Eliminar</button></a>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                <tr>
+                                    <td>{{ producto.nombre }}</td>
+                                    <td>{{ producto.cantidad }}</td>
+                                    <td>{{ producto.precio }}</td>
+                                    <td>{{ producto.cantidad * producto.precio }}</td>
+                                    <td>
+                                        <!-- Botones para modificar o eliminar productos del carrito -->
+                                        <div class="btn-group" role="group" aria-label="Acciones">
+                                            <a href="/update/{{ index }}"
+                                                class="btn btn-sm btn-primary mx-1">Modificar</a>
+                                            <a href="/delete/{{ index }}"
+                                                class="btn btn-sm btn-danger">Eliminar</button></a>
+                                        </div>
+                                    </td>
+                                </tr>
                                 {% endfor %}
                             </tbody>
                         </table>

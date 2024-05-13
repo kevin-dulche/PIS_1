@@ -1,56 +1,60 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel del Cajero - Otzo</title>
-    <!-- Enlaces a los archivos CSS de Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel del Cajero - Otzo</title>
+  <!-- Enlaces a los archivos CSS de Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+
 <body>
 
-<!-- Navbar de Bootstrap -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">Otzo</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto"> <!-- Alinea el contenido a la derecha -->
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">Inicio</a>
-        </li>
-        <!-- <li class="nav-item">
+  <!-- Navbar de Bootstrap -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Otzo</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto"> <!-- Alinea el contenido a la derecha -->
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#">Inicio</a>
+          </li>
+          <!-- <li class="nav-item">
           <a class="nav-link" href="#">Link</a>
         </li> -->
-        <li class="nav-item">
-          <a class="nav-link" href="/logout">Cerrar Sesión</a>
-        </li>
-      </ul>
+          <li class="nav-item">
+            <a class="nav-link" href="/logout">Cerrar Sesión</a>
+          </li>
+        </ul>
+      </div>
     </div>
-  </div>
-</nav>
+  </nav>
 
-<!-- Contenido de tu página -->
-{% block body %}
-<div class="container my-5 mx-auto">
-  <div class="row justify-content-evenly">
-    <div class="card" style="width: 18rem;">
-      <img src="{{url_for('static', filename='images/vender.png')}}" class="card-img-top mx-1">
-      <br>
-      <div class="card-body">
-        <h3 class="card-title fw-bold">Realizar venta</h3>
-        <p class="card-text text-muted">Procesar una venta.</p>
+  <!-- Contenido de tu página -->
+  {% block body %}
+  <div class="container my-5 mx-auto">
+    <div class="row justify-content-evenly">
+      <div class="card" style="width: 18rem;">
+        <img src="{{url_for('static', filename='images/vender.png')}}" class="card-img-top mx-1">
         <br>
-        <a href="/vender" class="btn btn-primary">Ir a venta</a>
+        <div class="card-body">
+          <h3 class="card-title fw-bold">Realizar venta</h3>
+          <p class="card-text text-muted">Procesar una venta.</p>
+          <br>
+          <a href="/vender" class="btn btn-primary">Ir a venta</a>
+        </div>
       </div>
     </div>
   </div>
-</div>
-{% endblock %}
+  {% endblock %}
 
-<!-- Enlaces a los archivos JS de Bootstrap -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Enlaces a los archivos JS de Bootstrap -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
