@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+
+{% block title %}
+
+Actualizar Cantidad
+
+{% endblock %}
+
+
+{% block nav %}
+
+<li class="nav-item">
+    <a class="nav-link active" aria-current="page" href="/vender">Regresar</a>
+</li>
+
+{% endblock %}
+
+
+{% block content %}
+
+{% if error %}
+<script>
+    alert("{{ error }}");
+</script>
+{% endif %}
+
+<div class="container">
+    <h1 class="mt-5">Actualizar Cantidad</h1>
+    <p class="mt-4">Producto: {{ producto.nombre }}</p>
+    <p>Cantidad Actual: {{ producto.cantidad }}</p>
+    <form action="/update/{{ index }}" method="POST" class="mt-2" class="mx-2">
+        <div class="form-group">
+            <label for="content">Cantidad del producto</label>
+            <input type="number" id="cantidad" name="cantidad" value="{{ producto.cantidad }}" min="1" required>
+            <button type="submit" class="btn btn-primary">Actualizar</button>
+        </div>
+    </form>
+</div>
+
+<!-- Scripts de Bootstrap -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
+{% endblock %}

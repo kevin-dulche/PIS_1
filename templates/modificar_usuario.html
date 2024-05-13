@@ -1,110 +1,132 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Usuarios - Otzo</title>
-    <!-- Enlaces a los archivos CSS de Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Usuarios - Otzo</title>
+  <!-- Enlaces a los archivos CSS de Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+
 <body>
 
-<!-- Navbar de Bootstrap -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">Otzo</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto"> <!-- Alinea el contenido a la derecha -->
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="/admin_dashboard">Inicio</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/logout">Cerrar Sesión</a>
-        </li>
-      </ul>
+  <!-- Navbar de Bootstrap -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Otzo</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto"> <!-- Alinea el contenido a la derecha -->
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/gestion_usuario">Regresar</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/logout">Cerrar Sesión</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Contenido de tu página -->
+  <div class="container my-5">
+    <h2 class="mb-4 text-center">Modificar Usuario</h2>
+
+    <!-- Formulario para seleccionar usuario y elegir qué modificar -->
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+
+        <!-- Mostrar mensajes flash -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="alert alert-dismissible {% for category, _ in messages %}alert-{{ category }} {% endfor %}">
+          {% for category, message in messages %}
+          <!-- <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button> -->
+          <strong>{{ message }}</strong>
+          {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+        <!-- Fin de mensajes flash -->
+
+        <form action="/modificar_usuario" method="POST" id="modificarForm">
+          <div class="mb-3">
+            <label for="usuario" class="form-label">Seleccionar Usuario</label>
+            <select id="usuario" class="form-select" name="username">
+              <!-- Aquí se insertarán las opciones para seleccionar al usuario -->
+              {% for usuario in usuarios %}
+              <option value="{{ usuario[0] }}">{{ usuario[1] }} ({{ usuario[3] }})</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-3" id="opciones">
+            <label class="form-label">Elegir qué modificar</label>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="opcion" id="opcion_nombre" value="nombre" checked>
+              <label class="form-check-label" for="opcion_nombre">
+                Nombre de Usuario
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="opcion" id="opcion_contraseña" value="contraseña">
+              <label class="form-check-label" for="opcion_contraseña">
+                Contraseña
+              </label>
+            </div>
+          </div>
+
+          <!-- Campos para modificar el nombre de usuario -->
+          <div id="nombreDiv" class="mb-3">
+            <label for="new_username" class="form-label">Nuevo Nombre de Usuario</label>
+            <input type="text" class="form-control" id="new_username" name="new_username"
+              placeholder="Nuevo Nombre de Usuario">
+          </div>
+
+          <!-- Campo para modificar la contraseña -->
+          <div id="contraseñaDiv" class="mb-3" style="display: none;">
+            <label for="new_password" class="form-label">Nueva Contraseña</label>
+            <input type="password" class="form-control" id="new_password" name="new_password"
+              placeholder="Nueva Contraseña">
+          </div>
+
+          <button type="submit" class="btn btn-primary">Modificar</button>
+        </form>
+      </div>
     </div>
   </div>
-</nav>
 
-<!-- Contenido de tu página -->
-<div class="container my-5">
-  <h2 class="mb-4 text-center">Modificar Usuario</h2>
-  
-  <!-- Formulario para seleccionar usuario y elegir qué modificar -->
-  <div class="row justify-content-center">
-    <div class="col-md-6">
-      <form action="/modificar_usuario" method="post" id="modificarForm">
-        <div class="mb-3">
-          <label for="usuario" class="form-label">Seleccionar Usuario</label>
-          <select id="usuario" class="form-select" name="username">
-            <!-- Aquí se insertarán las opciones para seleccionar al usuario -->
-            {% for usuario in usuarios %}
-              <option value="{{ usuario.id }}">{{ usuario.username }} ({{ usuario.role }})</option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Elegir qué modificar</label>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="opcion" id="opcion_nombre" value="nombre" checked>
-            <label class="form-check-label" for="opcion_nombre">
-              Nombre de Usuario
-            </label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="opcion" id="opcion_contraseña" value="contraseña">
-            <label class="form-check-label" for="opcion_contraseña">
-              Contraseña
-            </label>
-          </div>
-        </div>
-        
-        <!-- Campos para modificar el nombre de usuario -->
-        <div id="nombreDiv" class="mb-3">
-          <label for="new_username" class="form-label">Nuevo Nombre de Usuario</label>
-          <input type="text" class="form-control" id="new_username" name="new_username">
-        </div>
-        
-        <!-- Campo para modificar la contraseña -->
-        <div id="contraseñaDiv" class="mb-3" style="display: none;">
-          <label for="new_password" class="form-label">Nueva Contraseña</label>
-          <input type="password" class="form-control" id="new_password" name="password">
-        </div>
-        
-        <button type="submit" class="btn btn-primary">Modificar</button>
-      </form>
-    </div>
-  </div>
-</div>
+  <script>
+    function mostrarOcultarCampos() {
+      var opciones_div = document.getElementById('opciones');
+      var opcionNombre = document.getElementById('opcion_nombre');
+      var opcionContraseña = document.getElementById('opcion_contraseña');
+      var nombreInput = document.getElementById('nombreDiv');
+      var contraseñaInput = document.getElementById('contraseñaDiv');
 
-<script>
-  // Función para mostrar u ocultar los campos según la opción seleccionada
-  function mostrarOcultarCampos() {
-    var opcionNombre = document.getElementById('opcion_nombre');
-    var opcionContraseña = document.getElementById('opcion_contraseña');
-    var nombreDiv = document.getElementById('nombreDiv');
-    var contraseñaDiv = document.getElementById('contraseñaDiv');
-    
-    // Mostrar campos para modificar el nombre de usuario si la opción es 'nombre'
-    opcionNombre.addEventListener('change', function() {
-      if (opcionNombre.checked) {
-        nombreDiv.style.display = 'block';
-        contraseñaDiv.style.display = 'none';
-      }
-    });
-    
-    // Mostrar campos para modificar la contraseña si la opción es 'contraseña'
-    opcionContraseña.addEventListener('change', function() {
-      if (opcionContraseña.checked) {
-        nombreDiv.style.display = 'none';
-        contraseñaDiv.style.display = 'block';
-      }
-    });
-  }
-  
-  // Llamar a la función al cargar la página
-  window.onload = mostrarOcultarCampos;
-</script>
+      opciones_div.addEventListener('change', function () {
+        if (opcionNombre.checked) {
+          nombreInput.style.display = 'block';
+          contraseñaInput.style.display = 'none';
+          nombreInput.required = true;
+          contraseñaInput.required = false;
+        }
+      });
+
+      opciones_div.addEventListener('change', function () {
+        if (opcionContraseña.checked) {
+          nombreInput.style.display = 'none';
+          contraseñaInput.style.display = 'block';
+          nombreInput.required = false;
+          contraseñaInput.required = true;
+        }
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      mostrarOcultarCampos();
+    });  
+  </script>

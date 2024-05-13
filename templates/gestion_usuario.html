@@ -1,68 +1,75 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Usuarios - Otzo</title>
-    <!-- Enlaces a los archivos CSS de Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Usuarios - Otzo</title>
+  <!-- Enlaces a los archivos CSS de Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+
 <body>
 
-<!-- Navbar de Bootstrap -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">Otzo</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto"> <!-- Alinea el contenido a la derecha -->
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="/admin_dashboard"> Regresar al Inicio</a>
-        </li> 
-        <li class="nav-item">
-          <a class="nav-link" href="/logout">Cerrar Sesión</a>
-        </li>
-      </ul>
+  <!-- Navbar de Bootstrap -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Otzo</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto"> <!-- Alinea el contenido a la derecha -->
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/admin"> Regresar al Inicio</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/logout">Cerrar Sesión</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Contenido de tu página -->
+  <div class="container my-5">
+    <h2 class="mb-4 text-center">Gestión de Usuarios</h2>
+
+    <div class="row align-items-center text-center">
+      <div class="col-md-4">
+        <div class="card" style="width: 18rem;">
+          <div class="card-body">
+            <h3 class="card-title fw-bold">Agregar Usuario</h3>
+            <p class="card-text text-muted">Agregar un nuevo usuario al sistema.</p>
+            <a href="/agregar_usuario" class="btn btn-primary">Agregar Usuario</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card" style="width: 18rem;">
+          <div class="card-body">
+            <h3 class="card-title fw-bold">Modificar Usuario</h3>
+            <p class="card-text text-muted">Modificar la información de un usuario existente.</p>
+            <a href="/modificar_usuario" class="btn btn-primary">Modificar Usuario</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card" style="width: 18rem;">
+          <div class="card-body">
+            <h3 class="card-title fw-bold">Eliminar Usuario</h3>
+            <p class="card-text text-muted">Eliminar un usuario del sistema.</p>
+            <a href="/eliminar_usuario" class="btn btn-primary">Eliminar Usuario</a>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-</nav>
-
-<!-- Contenido de tu página -->
-<div class="container my-5">
-  <h2 class="mb-4 text-center">Gestión de Usuarios</h2>
-
-  <div class="row align-items-center text-center">
-    <div class="col-md-4">
-      <div class="card" style="width: 18rem;">
-        <div class="card-body">
-          <h3 class="card-title fw-bold">Agregar Usuario</h3>
-          <p class="card-text text-muted">Agregar un nuevo usuario al sistema.</p>
-          <a href="/agregar_usuario" class="btn btn-primary">Agregar Usuario</a>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="card" style="width: 18rem;">
-        <div class="card-body">
-          <h3 class="card-title fw-bold">Modificar Usuario</h3>
-          <p class="card-text text-muted">Modificar la información de un usuario existente.</p>
-          <a href="/modificar_usuario" class="btn btn-primary">Modificar Usuario</a>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="card" style="width: 18rem;">
-        <div class="card-body">
-          <h3 class="card-title fw-bold">Eliminar Usuario</h3>
-          <p class="card-text text-muted">Eliminar un usuario del sistema.</p>
-          <a href="/eliminar_usuario" class="btn btn-primary">Eliminar Usuario</a>
-        </div>
-      </div>
-    </div>
-  </div>
+<<<<<<< HEAD
 </div>
+=======
+>>>>>>> d67b40d3ed30411e906903d387461c3827e99a4d
 
   <!-- Botón para mostrar/ocultar la tabla de usuarios -->
   <div class="row justify-content-center">
@@ -99,14 +106,24 @@
                 <tr>
                   <th>Usuario</th>
                   <th id="passwordHeader">Contraseña (Oculto)</th>
+<<<<<<< HEAD
+=======
+                  <th>Rol</th>
+>>>>>>> d67b40d3ed30411e906903d387461c3827e99a4d
                 </tr>
               </thead>
               <tbody>
                 <!-- Aquí se insertarán las filas de la tabla con los datos de los usuarios -->
                 {% for usuario in usuarios %}
                 <tr>
+<<<<<<< HEAD
                   <td>{{ usuario.username }}</td>
                   <td class="password">{{ usuario.password }}</td>
+=======
+                  <td>{{ usuario[1] }}</td>
+                  <td class="password">{{ usuario[2] }}</td>
+                  <td>{{ usuario[3] }}</td>
+>>>>>>> d67b40d3ed30411e906903d387461c3827e99a4d
                 </tr>
                 {% endfor %}
               </tbody>
@@ -116,47 +133,48 @@
       </div>
     </div>
   </div>
-</div>
+  </div>
 
-<!-- Enlaces a los archivos JS de Bootstrap y el script personalizado -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-  const toggleUserTableBtn = document.getElementById('toggleUserTableBtn');
-  const userTableContainer = document.getElementById('userTableContainer');
-  const togglePasswordBtn = document.getElementById('togglePasswordBtn');
-  const passwordHeader = document.getElementById('passwordHeader');
-  const passwords = document.querySelectorAll('.password');
+  <!-- Enlaces a los archivos JS de Bootstrap y el script personalizado -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const toggleUserTableBtn = document.getElementById('toggleUserTableBtn');
+    const userTableContainer = document.getElementById('userTableContainer');
+    const togglePasswordBtn = document.getElementById('togglePasswordBtn');
+    const passwordHeader = document.getElementById('passwordHeader');
+    const passwords = document.querySelectorAll('.password');
 
-  let passwordsHidden = true;
+    let passwordsHidden = true;
 
-  passwords.forEach(password => {
-    password.dataset.original = password.textContent;
-    password.textContent = '*'.repeat(password.textContent.length);
-  });
+    passwords.forEach(password => {
+      password.dataset.original = password.textContent;
+      password.textContent = '*'.repeat(password.textContent.length);
+    });
 
-  toggleUserTableBtn.addEventListener('click', function() {
-    if (userTableContainer.style.display === 'none') {
-      userTableContainer.style.display = 'block';
-    } else {
-      userTableContainer.style.display = 'none';
-    }
-  });
+    toggleUserTableBtn.addEventListener('click', function () {
+      if (userTableContainer.style.display === 'none') {
+        userTableContainer.style.display = 'block';
+      } else {
+        userTableContainer.style.display = 'none';
+      }
+    });
 
-  togglePasswordBtn.addEventListener('click', function() {
-    passwordsHidden = !passwordsHidden;
+    togglePasswordBtn.addEventListener('click', function () {
+      passwordsHidden = !passwordsHidden;
 
-    if (passwordsHidden) {
-      passwordHeader.textContent = 'Contraseña (Oculto)';
-      passwords.forEach(password => {
-        password.textContent = '*'.repeat(password.textContent.length);
-      });
-    } else {
-      passwordHeader.textContent = 'Contraseña';
-      passwords.forEach(password => {
-        password.textContent = password.dataset.original;
-      });
-    }
-  });
-</script>
+      if (passwordsHidden) {
+        passwordHeader.textContent = 'Contraseña (Oculto)';
+        passwords.forEach(password => {
+          password.textContent = '*'.repeat(password.textContent.length);
+        });
+      } else {
+        passwordHeader.textContent = 'Contraseña';
+        passwords.forEach(password => {
+          password.textContent = password.dataset.original;
+        });
+      }
+    });
+  </script>
 </body>
+
 </html>

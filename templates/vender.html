@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+
+{% block nav %}
+<li class="nav-item">
+    <a class="nav-link active" aria-current="page" href="/cajero">Inicio</a>
+</li>
+{% endblock %}
+
+{% block content %}
+
+{% if error %}
+<script>
+    alert("{{ error }}");
+</script>
+{% endif %}
+
+{% if mensaje %}
+<script>
+    alert("{{ mensaje }}");
+</script>
+{% endif %}
+
+<!-- Contenido del formulario de venta -->
+<div class="container my-5 mx-auto">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Agregar Producto al Carrito</h5>
+                    <form action="/vender" method="POST">
+                        <div class="mb-3">
+                            <label for="codigo-barras" class="form-label">Código de Barras</label>
+                            <input type="number" class="form-control" id="codigo-barras" name="codigo-barras" required>
+                            <label for="cantidad" class="form-label">Cantidad</label>
+                            <input type="number" class="form-control" id="cantidad" name="cantidad" min="1" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Agregar Producto</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Contenido del carrito de compras -->
+<div class="container my-5 mx-auto">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Carrito de Compras</h5>
+                    <form method="POST" id="carrito-form">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Cantidad</th>
+                                    <th>Precio Unitario</th>
+                                    <th>Subtotal</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="carrito-body">
+                                <!-- Aquí puedes iterar sobre los productos en el carrito y mostrarlos en filas de la tabla -->
+                                <!-- Por ejemplo, usando un bucle de Jinja para iterar sobre una lista de productos en el carrito -->
+                                {% for index, producto in enumerate(carrito) %}
+                                <tr>
+                                    <td>{{ producto.nombre }}</td>
+                                    <td>{{ producto.cantidad }}</td>
+                                    <td>{{ producto.precio }}</td>
+                                    <td>{{ producto.cantidad * producto.precio }}</td>
+                                    <td>
+                                        <!-- Botones para modificar o eliminar productos del carrito -->
+                                        <div class="btn-group" role="group" aria-label="Acciones">
+                                            <a href="/update/{{ index }}"
+                                                class="btn btn-sm btn-primary mx-1">Modificar</a>
+                                            <a href="/delete/{{ index }}"
+                                                class="btn btn-sm btn-danger">Eliminar</button></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <!-- Botón para finalizar la venta -->
+                        <a href="/finalizar_venta" class="btn btn-success">Finalizar Venta</a>
+                        <a href="/limpiar_carrito" class="btn btn-danger">Limpiar Carrito</a>
+                    </form>
+                    <!-- Mostrar el total de la venta -->
+                    <h5>Total: ${{ total }}</h5>
+                    <!-- Enlace para limpiar el carrito -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

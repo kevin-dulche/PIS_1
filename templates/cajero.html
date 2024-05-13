@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Cajero{% endblock %}
+
+{% block content %}
+<div class="container my-5 mx-auto">
+    <div class="row justify-content-evenly">
+        <div class="card" style="width: 18rem;">
+            <img src="{{url_for('static', filename='images/vender.png')}}" class="card-img-top mx-1">
+            <br>
+            <div class="card-body">
+                <h3 class="card-title fw-bold">Realizar venta</h3>
+                <p class="card-text text-muted">Procesar una venta.</p>
+                <br>
+                <a href="/vender" class="btn btn-primary">Ir a venta</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
