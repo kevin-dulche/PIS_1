@@ -410,6 +410,39 @@ def modificar_usuario():
     return render_template('modificar_usuario.html', usuarios=usuarios)
 
 
+@app.route('/eliminar_usuario', methods=['GET', 'POST'])
+@login_required
+def eliminar_usuario():
+    verificar_rol_admin()
+    conexion = mysql.connector.connect(
+        host='localhost',
+        user='root',
+        password='root',
+        database='appflask'
+    )
+    cursor = conexion.cursor()
+    cursor.execute('SELECT * FROM login')
+    usuarios = cursor.fetchall()
+    cursor.close()
+    conexion.close()
+    if request.method == 'POST':
+        usuario_seleccionado = request.form['username']
+        conexion = mysql.connector.connect(
+        host='localhost',
+        user='root',
+        password='root',
+        database='appflask'
+        )
+        cursor = conexion.cursor()
+        cursor.execute('DELETE FROM login WHERE id = %s', (usuario_seleccionado,))
+        conexion.commit()
+        cursor.close()
+        conexion.close()
+        flash('Usuario eliminado correctamente', 'success')
+        return redirect(url_for('eliminar_usuario'))
+    return render_template('eliminar_usuario.html', usuarios=usuarios)
+
+
 # Ruta para cerrar sesión
 @app.route('/logout')
 @login_required
