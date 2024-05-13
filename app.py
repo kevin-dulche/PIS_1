@@ -365,6 +365,51 @@ def agregar_usuario():
         return render_template('agregar_usuario.html')
     return render_template('agregar_usuario.html')
 
+
+@app.route('/modificar_usuario', methods=['GET', 'POST'])
+@login_required
+def modificar_usuario():
+    verificar_rol_admin()
+    conexion = mysql.connector.connect(
+        host='localhost',
+        user='root',
+        password='root',
+        database='appflask'
+    )
+    cursor = conexion.cursor()
+    cursor.execute('SELECT * FROM login')
+    usuarios = cursor.fetchall()
+    cursor.close()
+    conexion.close()
+    if request.method == 'POST':
+        usuario_seleccionado = request.form['username']
+        conexion = mysql.connector.connect(
+        host='localhost',
+        user='root',
+        password='root',
+        database='appflask'
+        )
+        cursor = conexion.cursor()
+        opcion = request.form['opcion']
+        if opcion == 'nombre':
+            nuevo_nombre = request.form['new_username']
+            cursor.execute('UPDATE login SET username = %s WHERE id = %s', (nuevo_nombre, usuario_seleccionado))
+            conexion.commit()
+            cursor.close()
+            conexion.close()
+            flash('Nombre de usuario modificado correctamente', 'success')
+            return redirect(url_for('modificar_usuario'))
+        elif opcion == 'contraseña':
+            nueva_contraseña = request.form['new_password']
+            cursor.execute('UPDATE login SET password = %s WHERE id = %s', (nueva_contraseña, usuario_seleccionado))
+            conexion.commit()
+            cursor.close()
+            conexion.close()
+            flash('Contraseña modificada correctamente', 'success')
+            return redirect(url_for('modificar_usuario'))
+    return render_template('modificar_usuario.html', usuarios=usuarios)
+
+
 # Ruta para cerrar sesión
 @app.route('/logout')
 @login_required

@@ -19,7 +19,7 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto"> <!-- Alinea el contenido a la derecha -->
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="/admin_dashboard">Inicio</a>
+          <a class="nav-link active" aria-current="page" href="/gestion_usuario">Regresar</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/logout">Cerrar Sesión</a>
@@ -36,42 +36,56 @@
   <!-- Formulario para seleccionar usuario y elegir qué modificar -->
   <div class="row justify-content-center">
     <div class="col-md-6">
-      <form action="/modificar_usuario" method="post" id="modificarForm">
+      
+      <!-- Mostrar mensajes flash -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      <div class="alert alert-dismissible {% for category, _ in messages %}alert-{{ category }} {% endfor %}">
+          {% for category, message in messages %}
+          <!-- <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button> -->
+          <strong>{{ message }}</strong>
+          {% endfor %}
+      </div>
+      {% endif %}
+      {% endwith %}
+      <!-- Fin de mensajes flash -->
+
+      <form action="/modificar_usuario" method="POST" id="modificarForm">
         <div class="mb-3">
           <label for="usuario" class="form-label">Seleccionar Usuario</label>
           <select id="usuario" class="form-select" name="username">
             <!-- Aquí se insertarán las opciones para seleccionar al usuario -->
             {% for usuario in usuarios %}
-              <option value="{{ usuario.id }}">{{ usuario.username }} ({{ usuario.role }})</option>
+              <option value="{{ usuario[0] }}">{{ usuario[1] }} ({{ usuario[3] }})</option>
             {% endfor %}
           </select>
         </div>
-        <div class="mb-3">
+        <div class="mb-3" id="opciones">
           <label class="form-label">Elegir qué modificar</label>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="opcion" id="opcion_nombre" value="nombre" checked>
-            <label class="form-check-label" for="opcion_nombre">
-              Nombre de Usuario
-            </label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="opcion" id="opcion_contraseña" value="contraseña">
-            <label class="form-check-label" for="opcion_contraseña">
-              Contraseña
-            </label>
-          </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="opcion" id="opcion_nombre" value="nombre" checked>
+              <label class="form-check-label" for="opcion_nombre">
+                Nombre de Usuario
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="opcion" id="opcion_contraseña" value="contraseña">
+              <label class="form-check-label" for="opcion_contraseña">
+                Contraseña
+              </label>
+            </div>
         </div>
         
         <!-- Campos para modificar el nombre de usuario -->
         <div id="nombreDiv" class="mb-3">
           <label for="new_username" class="form-label">Nuevo Nombre de Usuario</label>
-          <input type="text" class="form-control" id="new_username" name="new_username">
+          <input type="text" class="form-control" id="new_username" name="new_username" placeholder="Nuevo Nombre de Usuario">
         </div>
         
         <!-- Campo para modificar la contraseña -->
         <div id="contraseñaDiv" class="mb-3" style="display: none;">
           <label for="new_password" class="form-label">Nueva Contraseña</label>
-          <input type="password" class="form-control" id="new_password" name="password">
+          <input type="password" class="form-control" id="new_password" name="new_password" placeholder="Nueva Contraseña">
         </div>
         
         <button type="submit" class="btn btn-primary">Modificar</button>
@@ -81,30 +95,33 @@
 </div>
 
 <script>
-  // Función para mostrar u ocultar los campos según la opción seleccionada
   function mostrarOcultarCampos() {
+    var opciones_div = document.getElementById('opciones');
     var opcionNombre = document.getElementById('opcion_nombre');
     var opcionContraseña = document.getElementById('opcion_contraseña');
-    var nombreDiv = document.getElementById('nombreDiv');
-    var contraseñaDiv = document.getElementById('contraseñaDiv');
-    
-    // Mostrar campos para modificar el nombre de usuario si la opción es 'nombre'
-    opcionNombre.addEventListener('change', function() {
+    var nombreInput = document.getElementById('nombreDiv');
+    var contraseñaInput = document.getElementById('contraseñaDiv');
+  
+    opciones_div.addEventListener('change', function() {
       if (opcionNombre.checked) {
-        nombreDiv.style.display = 'block';
-        contraseñaDiv.style.display = 'none';
+        nombreInput.style.display = 'block';
+        contraseñaInput.style.display = 'none';
+        nombreInput.required = true;
+        contraseñaInput.required = false;
       }
     });
-    
-    // Mostrar campos para modificar la contraseña si la opción es 'contraseña'
-    opcionContraseña.addEventListener('change', function() {
+  
+    opciones_div.addEventListener('change', function() {
       if (opcionContraseña.checked) {
-        nombreDiv.style.display = 'none';
-        contraseñaDiv.style.display = 'block';
+        nombreInput.style.display = 'none';
+        contraseñaInput.style.display = 'block';
+        nombreInput.required = false;
+        contraseñaInput.required = true;
       }
     });
   }
   
-  // Llamar a la función al cargar la página
-  window.onload = mostrarOcultarCampos;
+  document.addEventListener('DOMContentLoaded', function() {
+    mostrarOcultarCampos();
+  });  
 </script>
