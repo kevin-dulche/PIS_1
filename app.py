@@ -74,6 +74,8 @@ def inicio():
             # Verificar el rol del usuario y redirigir a la página correspondiente
             if usuario_data[3] == 'Administrador':
                 return redirect(url_for('admin_page'))
+            elif usuario_data[3] == 'Almacenista':
+                return redirect(url_for('almacenista_page'))
             elif usuario_data[3] == 'Cajero':
                 return redirect(url_for('cajero_page'))
             elif usuario_data[3] == 'Cliente':
@@ -99,7 +101,15 @@ def admin_page():
 def cajero_page():
     verificar_rol_cajero()
     return render_template('cajero.html')
-    
+
+
+@app.route('/almacenista')
+@login_required
+def almacenista_page():
+    if current_user.is_authenticated and current_user.role == 'Almacenista':
+        return render_template('panelAlmacen.html')
+    else:
+        return abort(401, description="No tienes permisos para acceder a esta página.")
 
 
 @app.route('/cliente')
@@ -442,6 +452,127 @@ def eliminar_usuario():
         return redirect(url_for('eliminar_usuario'))
     return render_template('eliminar_usuario.html', usuarios=usuarios)
 
+@app.route('/gestion_productos')
+def gestion_productos():
+    return render_template('gestion_productos.html')
+
+@app.route('/agregar_producto', methods=['GET', 'POST'])
+@login_required
+def agregar_producto():
+    if current_user.is_authenticated and current_user.role == 'Almacenista':
+        if request.method == 'POST':
+            # Aquí obtendrás los datos del formulario enviado por el usuario
+            nombre = request.form['nombre']
+            codigo_barras = request.form['id']
+            cantidad_disponible = request.form['cantidad_disponible']
+            precio = request.form['precio']
+            
+            conexion = mysql.connector.connect(
+                host='localhost',
+                user='root',
+                password='root',
+                database='appflask'
+            )
+            cursor = conexion.cursor()
+            cursor.execute('INSERT INTO productos (nombre, id, cantidad_disponible, precio) VALUES (%s, %s, %s, %s)', (nombre, codigo_barras, cantidad_disponible, precio))
+            conexion.commit()
+            cursor.close()
+            conexion.close()
+            
+            flash('Producto agregado correctamente', 'success')
+            return redirect(url_for('agregar_producto'))
+        return render_template('agregar_producto.html')
+    
+
+@app.route('/modificar_producto', methods=['GET', 'POST'])
+@login_required
+def modificar_producto():
+    # Verificar que el usuario esté autenticado y tenga el rol adecuado
+    if current_user.is_authenticated and current_user.role == 'Almacenista':
+        # Manejar solicitudes POST
+        if request.method == 'POST':
+            # Obtener los datos del formulario
+            producto_id = request.form['producto_id']
+            opcion = request.form['opcion']
+            nuevo_valor = request.form['nuevo_precio']
+            
+            # Procesar la modificación del producto en la base de datos
+            conexion = mysql.connector.connect(
+                host='localhost',
+                user='root',
+                password='root',
+                database='appflask'
+            )
+            cursor = conexion.cursor()
+
+            # Actualizar el producto según la opción seleccionada
+            if opcion == 'precio':
+                cursor.execute('UPDATE productos SET precio = %s WHERE codigo_barras = %s', (nuevo_valor, producto_id))
+            elif opcion == 'existencia':
+                cursor.execute('UPDATE productos SET cantidad_disponible = %s WHERE codigo_barras = %s', (nuevo_valor, producto_id))
+                
+            conexion.commit()
+            cursor.close()
+            conexion.close()
+            
+            flash('Producto modificado correctamente', 'success')
+            return redirect(url_for('modificar_producto'))
+
+        # Manejar solicitudes GET
+        conexion = mysql.connector.connect(
+            host='localhost',
+            user='root',
+            password='root',
+            database='appflask'
+        )
+        cursor = conexion.cursor()
+        cursor.execute('SELECT * FROM productos')
+        productos = [Producto(*row) for row in cursor.fetchall()]  # Convertir filas de la base de datos en objetos Producto
+        cursor.close()
+        conexion.close()
+        
+        return render_template('modificar_producto.html', productos=productos)
+
+
+@app.route('/eliminar_producto', methods=['GET', 'POST'])
+@login_required
+def eliminar_producto():
+    if current_user.is_authenticated and current_user.role == 'Almacenista':
+        if request.method == 'POST':
+            # Obtener el ID del producto seleccionado para eliminar
+            producto_id = request.form['producto_id']
+            
+            # Procesar la eliminación del producto en la base de datos
+            conexion = mysql.connector.connect(
+                host='localhost',
+                user='root',
+                password='root',
+                database='appflask'
+            )
+            cursor = conexion.cursor()
+            cursor.execute('DELETE FROM productos WHERE id = %s', (producto_id,))
+            conexion.commit()
+            cursor.close()
+            conexion.close()
+            
+            flash('Producto eliminado correctamente', 'success')
+            return redirect(url_for('eliminar_producto'))
+        
+        # Si la petición no es POST, significa que es GET, por lo que solo mostramos el formulario
+        conexion = mysql.connector.connect(
+            host='localhost',
+            user='root',
+            password='root',
+            database='appflask'
+        )
+        cursor = conexion.cursor()
+        cursor.execute('SELECT * FROM productos')
+        productos = cursor.fetchall()
+        cursor.close()
+        conexion.close()
+        
+        return render_template('eliminar_producto.html', productos=productos)
+
 
 # Ruta para cerrar sesión
 @app.route('/logout')
@@ -460,6 +591,9 @@ def verificar_rol_admin():
     if not current_user.is_authenticated or current_user.role != 'Administrador':
         abort(401, description="No tienes permisos para acceder a esta página.")
 
+def verificar_rol_almacenista():
+    if not current_user.is_authenticated or current_user.role != 'Almacenista':
+        abort(401, description="No tienes permisos para acceder a esta página.")
 
 # Manejador para errores 404
 @app.errorhandler(404)

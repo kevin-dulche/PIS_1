@@ -22,7 +22,7 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto"> <!-- Alinea el contenido a la derecha -->
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/gestion_usuario">Regresar</a>
+            <a class="nav-link active" aria-current="page" href="/admin">Inicio</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/logout">Cerrar Sesión</a>
@@ -32,11 +32,11 @@
     </div>
   </nav>
 
-  <!-- Contenido de  página -->
+  <!-- Contenido de la página -->
   <div class="container my-5">
-    <h2 class="mb-4 text-center">Modificar Usuario</h2>
+    <h2 class="mb-4 text-center">Modificar Producto</h2>
 
-    <!-- Formulario para seleccionar usuario y elegir qué modificar -->
+    <!-- Formulario para seleccionar producto y elegir qué modificar -->
     <div class="row justify-content-center">
       <div class="col-md-6">
 
@@ -53,45 +53,45 @@
         {% endwith %}
         <!-- Fin de mensajes flash -->
 
-        <form action="/modificar_usuario" method="POST" id="modificarForm">
+        <form action="/modificar_producto" method="POST" id="modificarForm">
           <div class="mb-3">
-            <label for="usuario" class="form-label">Seleccionar Usuario</label>
-            <select id="usuario" class="form-select" name="username">
-              <!-- Aquí se insertarán las opciones para seleccionar al usuario -->
-              {% for usuario in usuarios %}
-              <option value="{{ usuario[0] }}">{{ usuario[1] }} ({{ usuario[3] }})</option>
+            <label for="producto" class="form-label">Seleccionar Producto</label>
+            <select id="producto" class="form-select" name="producto_id">
+              <!-- Aquí se insertarán las opciones para seleccionar al producto -->
+              {% for producto in productos %}
+              <option value="{{ producto.codigo_barras }}">{{ producto.nombre }} ({{ producto.codigo_barras }})</option>
               {% endfor %}
             </select>
           </div>
           <div class="mb-3" id="opciones">
             <label class="form-label">Elegir qué modificar</label>
             <div class="form-check">
-              <input class="form-check-input" type="radio" name="opcion" id="opcion_nombre" value="nombre" checked>
-              <label class="form-check-label" for="opcion_nombre">
-                Nombre de Usuario
+              <input class="form-check-input" type="radio" name="opcion" id="opcion_precio" value="precio" checked>
+              <label class="form-check-label" for="opcion_precio">
+                Precio
               </label>
             </div>
             <div class="form-check">
-              <input class="form-check-input" type="radio" name="opcion" id="opcion_contraseña" value="contraseña">
-              <label class="form-check-label" for="opcion_contraseña">
-                Contraseña
+              <input class="form-check-input" type="radio" name="opcion" id="opcion_existencia" value="existencia">
+              <label class="form-check-label" for="opcion_existencia">
+                Cantidad Disponible
               </label>
             </div>
           </div>
 
-          <!-- Campos para modificar el nombre de usuario -->
-          <div id="nombreDiv" class="mb-3">
-            <label for="new_username" class="form-label">Nuevo Nombre de Usuario</label>
-            <input type="text" class="form-control" id="new_username" name="new_username"
-              placeholder="Nuevo Nombre de Usuario">
+          <!-- Campo para modificar el precio -->
+          <div id="precioDiv" class="mb-3">
+            <label for="new_precio" class="form-label">Nuevo Precio</label>
+            <input type="text" class="form-control" id="new_precio" name="nuevo_precio" placeholder="Nuevo Precio">
           </div>
 
-          <!-- Campo para modificar la contraseña -->
-          <div id="contraseñaDiv" class="mb-3" style="display: none;">
-            <label for="new_password" class="form-label">Nueva Contraseña</label>
-            <input type="password" class="form-control" id="new_password" name="new_password"
-              placeholder="Nueva Contraseña">
+          <!-- Campo para modificar la cantidad disponible -->
+          <div id="existenciaDiv" class="mb-3" style="display: none;">
+            <label for="new_existencia" class="form-label">Nueva Cantidad Disponible</label>
+            <input type="text" class="form-control" id="new_existencia" name="nuevo_valor"
+              placeholder="Nueva Cantidad Disponible">
           </div>
+
 
           <button type="submit" class="btn btn-primary">Modificar</button>
         </form>
@@ -102,31 +102,31 @@
   <script>
     function mostrarOcultarCampos() {
       var opciones_div = document.getElementById('opciones');
-      var opcionNombre = document.getElementById('opcion_nombre');
-      var opcionContraseña = document.getElementById('opcion_contraseña');
-      var nombreInput = document.getElementById('nombreDiv');
-      var contraseñaInput = document.getElementById('contraseñaDiv');
+      var opcionPrecio = document.getElementById('opcion_precio');
+      var opcionExistencia = document.getElementById('opcion_existencia');
+      var precioInput = document.getElementById('precioDiv');
+      var existenciaInput = document.getElementById('existenciaDiv');
 
       opciones_div.addEventListener('change', function () {
-        if (opcionNombre.checked) {
-          nombreInput.style.display = 'block';
-          contraseñaInput.style.display = 'none';
-          nombreInput.required = true;
-          contraseñaInput.required = false;
+        if (opcionPrecio.checked) {
+          precioInput.style.display = 'block';
+          existenciaInput.style.display = 'none';
+          precioInput.required = true;
+          existenciaInput.required = false;
         }
       });
 
       opciones_div.addEventListener('change', function () {
-        if (opcionContraseña.checked) {
-          nombreInput.style.display = 'none';
-          contraseñaInput.style.display = 'block';
-          nombreInput.required = false;
-          contraseñaInput.required = true;
+        if (opcionExistencia.checked) {
+          precioInput.style.display = 'none';
+          existenciaInput.style.display = 'block';
+          precioInput.required = false;
+          existenciaInput.required = true;
         }
       });
     }
 
     document.addEventListener('DOMContentLoaded', function () {
       mostrarOcultarCampos();
-    });  
+    });
   </script>
