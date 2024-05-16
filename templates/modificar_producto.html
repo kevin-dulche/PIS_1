@@ -22,7 +22,7 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto"> <!-- Alinea el contenido a la derecha -->
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/admin">Inicio</a>
+            <a class="nav-link active" aria-current="page" href="/gestion_productos">Inicio</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/logout">Cerrar Sesión</a>
@@ -82,13 +82,13 @@
           <!-- Campo para modificar el precio -->
           <div id="precioDiv" class="mb-3">
             <label for="new_precio" class="form-label">Nuevo Precio</label>
-            <input type="text" class="form-control" id="new_precio" name="nuevo_precio" placeholder="Nuevo Precio">
+            <input type="number" class="form-control" id="new_precio" name="nuevo_precio" placeholder="Nuevo Precio" step="0.01">
           </div>
 
           <!-- Campo para modificar la cantidad disponible -->
           <div id="existenciaDiv" class="mb-3" style="display: none;">
             <label for="new_existencia" class="form-label">Nueva Cantidad Disponible</label>
-            <input type="text" class="form-control" id="new_existencia" name="nuevo_valor"
+            <input type="number" class="form-control" id="new_existencia" name="nuevo_valor"
               placeholder="Nueva Cantidad Disponible">
           </div>
 

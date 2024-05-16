@@ -56,7 +56,7 @@
                 <select id="producto" class="form-select" name="producto_id">
                   <!-- Aquí se insertarán las opciones para seleccionar el producto-->
                   {% for producto in productos %}
-                  <option value="{{ producto.id }}">{{ producto.nombre }}</option>
+                  <option value="{{ producto[0] }}">{{ producto[1] }}</option>
                   {% endfor %}
                 </select>
               </div>

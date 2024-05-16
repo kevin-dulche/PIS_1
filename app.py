@@ -160,7 +160,6 @@ def vender():
             encontrado = False
             for item in carrito:
                 if item['nombre'] == producto.nombre:
-                    encontrado = True
                     cantidad_en_carrito = item['cantidad']
                     cantidad_total = cantidad_en_carrito + cantidad
                     if cantidad_total <= producto.existencia:
@@ -454,7 +453,18 @@ def eliminar_usuario():
 
 @app.route('/gestion_productos')
 def gestion_productos():
-    return render_template('gestion_productos.html')
+    conexion = mysql.connector.connect(
+        host='localhost',
+        user='root',
+        password='root',
+        database='appflask'
+    )
+    cursor = conexion.cursor()
+    cursor.execute('SELECT * FROM productos')
+    productos = cursor.fetchall()
+    cursor.close()
+    conexion.close()
+    return render_template('gestion_productos.html', productos=productos)
 
 @app.route('/agregar_producto', methods=['GET', 'POST'])
 @login_required
@@ -494,7 +504,8 @@ def modificar_producto():
             # Obtener los datos del formulario
             producto_id = request.form['producto_id']
             opcion = request.form['opcion']
-            nuevo_valor = request.form['nuevo_precio']
+            nuevo_precio = round(float(request.form['nuevo_precio']), 2)
+            nuevo_existencia = request.form['nuevo_valor']
             
             # Procesar la modificación del producto en la base de datos
             conexion = mysql.connector.connect(
@@ -507,9 +518,9 @@ def modificar_producto():
 
             # Actualizar el producto según la opción seleccionada
             if opcion == 'precio':
-                cursor.execute('UPDATE productos SET precio = %s WHERE codigo_barras = %s', (nuevo_valor, producto_id))
+                cursor.execute('UPDATE productos SET precio = %s WHERE id = %s', (nuevo_precio, producto_id))
             elif opcion == 'existencia':
-                cursor.execute('UPDATE productos SET cantidad_disponible = %s WHERE codigo_barras = %s', (nuevo_valor, producto_id))
+                cursor.execute('UPDATE productos SET cantidad_disponible = %s WHERE id = %s', (nuevo_existencia, producto_id))
                 
             conexion.commit()
             cursor.close()

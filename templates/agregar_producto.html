@@ -1,4 +1,4 @@
-DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -19,7 +19,7 @@ DOCTYPE html>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto"> <!-- Alinea el contenido a la derecha -->
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="/admin_dashboard">Inicio</a>
+          <a class="nav-link active" aria-current="page" href="/admin">Inicio</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/logout">Cerrar Sesión</a>
@@ -60,15 +60,15 @@ DOCTYPE html>
                 </div>
                 <div class="mb-3">
                 <label for="id" class="form-label">Código de Barras:</label>
-                <input type="text" id="id" name="id" class="form-control" required>
+                <input type="number" id="id" name="id" class="form-control" required>
                 </div>
                 <div class="mb-3">
                 <label for="cantidad_disponible" class="form-label">Cantidad Disponible:</label>
-                <input type="text" id="cantidad_disponible" name="cantidad_disponible" class="form-control" required>
+                <input type="number" id="cantidad_disponible" name="cantidad_disponible" class="form-control" required>
                 </div>
                 <div class="mb-3">
                 <label for="precio" class="form-label">Precio:</label>
-                <input type="text" id="precio" name="precio" class="form-control" required>
+                <input type="number" id="precio" name="precio" class="form-control" step="0.01" required>
                 </div>
                 <button type="submit" class="btn btn-primary">Agregar producto</button>
                 <a href="{{ url_for('gestion_productos') }}" class="btn btn-primary">Regresar</a>
