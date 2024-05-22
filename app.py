@@ -17,7 +17,7 @@ class Usuario(UserMixin):
         self.password = password
         self.role = role
 
-    
+
 class Producto:
     def __init__(self, id:str, nombre:str, precio:str, cantidad_disponible:int):
         self.codigo_barras = id
@@ -78,8 +78,6 @@ def inicio():
                 return redirect(url_for('almacenista_page'))
             elif usuario_data[3] == 'Cajero':
                 return redirect(url_for('cajero_page'))
-            elif usuario_data[3] == 'Cliente':
-                return redirect(url_for('cliente_page'))
         else:
             cursor.close()
             conexion.close()
@@ -108,15 +106,6 @@ def cajero_page():
 def almacenista_page():
     if current_user.is_authenticated and current_user.role == 'Almacenista':
         return render_template('panelAlmacen.html')
-    else:
-        return abort(401, description="No tienes permisos para acceder a esta página.")
-
-
-@app.route('/cliente')
-@login_required
-def cliente_page():
-    if current_user.is_authenticated and current_user.role == 'Cliente':
-        return render_template('cliente.html')
     else:
         return abort(401, description="No tienes permisos para acceder a esta página.")
 
@@ -451,6 +440,7 @@ def eliminar_usuario():
         return redirect(url_for('eliminar_usuario'))
     return render_template('eliminar_usuario.html', usuarios=usuarios)
 
+
 @app.route('/gestion_productos')
 def gestion_productos():
     conexion = mysql.connector.connect(
@@ -465,6 +455,7 @@ def gestion_productos():
     cursor.close()
     conexion.close()
     return render_template('gestion_productos.html', productos=productos)
+
 
 @app.route('/agregar_producto', methods=['GET', 'POST'])
 @login_required
@@ -492,7 +483,7 @@ def agregar_producto():
             flash('Producto agregado correctamente', 'success')
             return redirect(url_for('agregar_producto'))
         return render_template('agregar_producto.html')
-    
+
 
 @app.route('/modificar_producto', methods=['GET', 'POST'])
 @login_required
@@ -598,13 +589,16 @@ def verificar_rol_cajero():
     if not current_user.is_authenticated or current_user.role != 'Cajero':
         abort(401, description="No tienes permisos para acceder a esta página.")
 
+
 def verificar_rol_admin():
     if not current_user.is_authenticated or current_user.role != 'Administrador':
         abort(401, description="No tienes permisos para acceder a esta página.")
 
+
 def verificar_rol_almacenista():
     if not current_user.is_authenticated or current_user.role != 'Almacenista':
         abort(401, description="No tienes permisos para acceder a esta página.")
+
 
 # Manejador para errores 404
 @app.errorhandler(404)
