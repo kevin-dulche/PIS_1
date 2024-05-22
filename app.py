@@ -186,6 +186,30 @@ def vender():
     return render_template('vender.html', error=error, carrito=carrito, total=total, enumerate=enumerate)
 
 
+@app.route('/buscar_producto')
+@login_required
+def buscar_producto():
+    term = request.args.get('term')
+    conexion = mysql.connector.connect(
+        host='localhost',
+        user='root',
+        password='root',
+        database='appflask'
+    )
+    cursor = conexion.cursor()
+    query = "SELECT id, nombre FROM productos WHERE nombre LIKE %s LIMIT 10"
+    cursor.execute(query, (f'{term}%',))  # Buscar productos que empiecen con el término
+    results = cursor.fetchall()
+    cursor.close()
+    conexion.close()
+
+    suggestions = []
+    for result in results:
+        suggestions.append({'value': result[0], 'label': result[1]})
+
+    return jsonify(suggestions)
+
+
 @app.route('/limpiar_carrito', methods=['GET'])
 @login_required
 def limpiar_carrito():
