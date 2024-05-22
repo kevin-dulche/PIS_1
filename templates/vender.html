@@ -30,6 +30,9 @@
                     <h5 class="card-title">Agregar Producto al Carrito</h5>
                     <form action="/vender" method="POST">
                         <div class="mb-3">
+                            <label for="nombre-producto" class="form-label">Nombre del Producto</label>
+                            <input type="text" class="form-control" id="nombre-producto" name="nombre-producto" oninput="buscarProducto()">
+                            <div id="lista-productos" class="dropdown-menu"></div>
                             <label for="codigo-barras" class="form-label">Código de Barras</label>
                             <input type="number" class="form-control" id="codigo-barras" name="codigo-barras" required>
                             <label for="cantidad" class="form-label">Cantidad</label>
@@ -95,6 +98,64 @@
         </div>
     </div>
 </div>
+
+
+<script>
+    async function buscarProducto() {
+        const input = document.getElementById('nombre-producto');
+        const lista = document.getElementById('lista-productos');
+        const term = input.value;
+
+        if (term.length < 2) {
+            lista.style.display = 'none';
+            return;
+        }
+
+        const response = await fetch(`/buscar_producto?term=${term}`);
+        const productos = await response.json();
+
+        lista.innerHTML = '';
+        productos.forEach(producto => {
+            const item = document.createElement('a');
+            item.className = 'dropdown-item';
+            item.href = '#';
+            item.textContent = producto.label;
+            item.onclick = () => seleccionarProducto(producto.value, producto.label);
+            lista.appendChild(item);
+        });
+
+        lista.style.display = 'block';
+    }
+
+    function seleccionarProducto(codigo, nombre) {
+        document.getElementById('codigo-barras').value = codigo;
+        document.getElementById('nombre-producto').value = nombre;
+        document.getElementById('lista-productos').style.display = 'none';
+    }
+</script>
+
+<style>
+    .dropdown-menu {
+        display: none;
+        position: absolute;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        max-height: 200px;
+        overflow-y: auto;
+        z-index: 1000;
+        width: 100%;
+    }
+
+    .dropdown-item {
+        padding: 8px 16px;
+        cursor: pointer;
+    }
+
+    .dropdown-item:hover {
+        background-color: #f8f9fa;
+    }
+</style>
 
 
 {% endblock %}
