@@ -2,6 +2,108 @@
 
 {% block title %}Cobrar{% endblock %}
 
+{% block css %}
+<style>
+    .form-control {
+        display: block;
+        width: 50%;
+        padding: .375rem .75rem;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: var(--bs-body-color);
+        background-color: var(--bs-form-control-bg);
+        background-clip: padding-box;
+        border: var(--bs-border-width) solid var(--bs-border-color);
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        border-radius: .375rem;
+        transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+    }
+
+    /* Estilo para el cuerpo de la página */
+    body {
+        font-family: Arial, sans-serif;
+        background: radial-gradient(circle, #10D0E7, #99E710);
+        margin: 0;
+        padding: 0;
+        color: #fff;
+        overflow-x: hidden;
+        /* Oculta la barra de desplazamiento horizontal */
+    }
+
+    /* Estilo para la navbar */
+    .navbar {
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Estilo para las tarjetas */
+    .card {
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s, box-shadow 0.3s;
+        background-color: #fff;
+        color: #000;
+    }
+
+    .card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-primary {
+        background-color: #10D0E7;
+        border-color: #10D0E7;
+        transition: background-color 0.2s, transform 0.2s;
+    }
+
+    .btn-primary:hover {
+        background-color: #0ca0b5;
+        transform: scale(1.05);
+    }
+
+    .btn-danger {
+        background-color: #E010E7;
+        border-color: #E010E7;
+        transition: background-color 0.2s, transform 0.2s;
+    }
+
+    .btn-danger:hover {
+        background-color: #b50ca0;
+        transform: scale(1.05);
+    }
+
+    .btn-success {
+        background-color: #10D0E7;
+        border-color: #10D0E7;
+        transition: background-color 0.2s, transform 0.2s;
+    }
+
+    .btn-success:hover {
+        background-color: #0ca0b5;
+        transform: scale(1.05);
+    }
+
+    /* Animaciones */
+    .fadeIn {
+        animation: fadeIn 1s;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+{% endblock %}
+
 {% block nav %}
 
 <li class="nav-item">
@@ -68,7 +170,12 @@
                     <label for="monto">Monto recibido:</label>
                     <div class="input-group">
                         <input type="number" class="form-control" name="monto_recibido" id="monto_recibido" step="0.01"
-                            min="{{total}}" required>
+                            min="72.0" required style="
+                        border: 1px solid #ccc; /* Opcional: añadir un borde */
+                        padding: 6px; /* Opcional: añadir un poco de espacio interior */
+                        border-radius: 13px; /* Aquí es donde se redondean los bordes */
+                        width: 200px; /* Ancho del input */
+                    ">
                         <div class="input-group-append">
                             <button class="btn btn-primary" type="submit">Calcular cambio</button>
                         </div>

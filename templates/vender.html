@@ -7,6 +7,79 @@
 </li>
 {% endblock %}
 
+{% block css %}
+<style>
+    /* Estilo para el cuerpo de la página */
+    body {
+        font-family: Arial, sans-serif;
+        background: radial-gradient(circle, #10D0E7, #99E710);
+        margin: 0;
+        padding: 0;
+        color: #fff;
+        overflow-y: hidden;
+        /* Oculta la barra de desplazamiento vertical */
+    }
+
+    /* Estilo para la navbar */
+    .navbar {
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Estilo para las tarjetas */
+    .card {
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s, box-shadow 0.3s;
+        background-color: #fff;
+        color: #000;
+    }
+
+    .card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-primary {
+        background-color: #10D0E7;
+        border-color: #10D0E7;
+        transition: background-color 0.2s, transform 0.2s;
+    }
+
+    .btn-primary:hover {
+        background-color: #0ca0b5;
+        transform: scale(1.05);
+    }
+
+    .btn-danger {
+        background-color: #E010E7;
+        border-color: #E010E7;
+        transition: background-color 0.2s, transform 0.2s;
+    }
+
+    .btn-danger:hover {
+        background-color: #b50ca0;
+        transform: scale(1.05);
+    }
+
+    /* Animaciones */
+    .fadeIn {
+        animation: fadeIn 1s;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 
 {% if error %}
@@ -31,7 +104,8 @@
                     <form action="/vender" method="POST">
                         <div class="mb-3">
                             <label for="nombre-producto" class="form-label">Nombre del Producto</label>
-                            <input type="text" class="form-control" id="nombre-producto" name="nombre-producto" oninput="buscarProducto()">
+                            <input type="text" class="form-control" id="nombre-producto" name="nombre-producto"
+                                oninput="buscarProducto()">
                             <div id="lista-productos" class="dropdown-menu"></div>
                             <label for="codigo-barras" class="form-label">Código de Barras</label>
                             <input type="number" class="form-control" id="codigo-barras" name="codigo-barras" required>

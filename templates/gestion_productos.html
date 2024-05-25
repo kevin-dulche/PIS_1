@@ -1,106 +1,167 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Usuarios - Otzo</title>
-    <!-- Enlaces a los archivos CSS de Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Usuarios - Otzo</title>
+  <!-- Enlaces a los archivos CSS de Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    /* Estilo para el cuerpo de la página */
+    body {
+      font-family: Arial, sans-serif;
+      background: radial-gradient(circle, #10E7D0, #E710CA);
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Estilo para la navbar */
+    .navbar {
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Estilo para las tarjetas */
+    .card {
+      margin: 20px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s;
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+    }
+
+    .card-img-top {
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+    }
+
+    .card-body {
+      padding: 20px;
+    }
+
+    .card-title {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+
+    .card-text {
+      color: #6c757d;
+      margin-bottom: 20px;
+    }
+
+    /* Botón de la tarjeta */
+    .btn-primary {
+      background-color: #007bff;
+      border-color: #007bff;
+      padding: 10px 20px;
+      border-radius: 5px;
+      transition: background-color 0.2s, transform 0.2s;
+    }
+
+    .btn-primary:hover {
+      background-color: #0056b3;
+      transform: scale(1.05);
+    }
+  </style>
 </head>
+
 <body>
 
-<!-- Navbar de Bootstrap -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">Otzo</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto"> <!-- Alinea el contenido a la derecha -->
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="/almacenista"> Regresar al Inicio</a>
-        </li> 
-        <li class="nav-item">
-          <a class="nav-link" href="/logout">Cerrar Sesión</a>
-        </li>
-      </ul>
-    </div>
-  </div>
-</nav>
-
-<!-- Contenido de tu página -->
-<div class="container my-5">
-  <h2 class="mb-4 text-center">Gestión de Productos</h2>
-
-  <div class="row align-items-center text-center">
-    <div class="col-md-4">
-      <div class="card" style="width: 18rem;">
-        <div class="card-body">
-          <h3 class="card-title fw-bold">Agregar Productos</h3>
-          <p class="card-text text-muted">Agregar un nuevo Producto al sistema.</p>
-          <a href="/agregar_producto" class="btn btn-primary">Agregar Producto</a>
-        </div>
+  <!-- Navbar de Bootstrap -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Otzo</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto"> <!-- Alinea el contenido a la derecha -->
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/almacenista"> Regresar al Inicio</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/logout">Cerrar Sesión</a>
+          </li>
+        </ul>
       </div>
     </div>
-    <div class="col-md-4">
-      <div class="card" style="width: 18rem;">
-        <div class="card-body">
-          <h3 class="card-title fw-bold">Modificar Productos</h3>
-          <p class="card-text text-muted">Modificar la información de un Producto existente.</p>
-          <a href="/modificar_producto" class="btn btn-primary">Modificar Producto</a>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="card" style="width: 18rem;">
-        <div class="card-body">
-          <h3 class="card-title fw-bold">Eliminar Producto</h3>
-          <p class="card-text text-muted">Eliminar un Producto del sistema.</p>
-          <a href="/eliminar_producto" class="btn btn-primary">Eliminar Producto</a>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+  </nav>
 
-<div class="row mt-4" id="productTableContainer">
-  <div class="col-md-12">
-    <div class="card fadeIn">
-      <div class="card-body">
-        <h5 class="card-title">Productos Registrados</h5>
-        <div class="table-responsive">
-          <table id="userTable" class="table table-bordered table-sm">
-            <thead>
-              <tr>
-                <th>Codigo de Barras</th>
-                <th>Nombre</th>
-                <th>Precio</th>
-                <th>Existencia</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- Aquí se insertarán las filas de la tabla con los datos de los usuarios -->
-              {% for producto in productos %}
-              <tr>
-                <td>{{ producto[0] }}</td>
-                <td>{{ producto[1] }}</td>
-                <td>{{ producto[2] }}</td>
-                <td>{{ producto[3] }}</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+  <!-- Contenido de tu página -->
+  <div class="container my-5">
+    <h2 class="mb-4 text-center">Gestión de Productos</h2>
+
+    <div class="row align-items-center text-center">
+      <div class="col-md-4">
+        <div class="card" style="width: 18rem;">
+          <div class="card-body">
+            <h3 class="card-title fw-bold">Agregar Productos</h3>
+            <p class="card-text text-muted">Agregar un nuevo Producto al sistema.</p>
+            <a href="/agregar_producto" class="btn btn-primary">Agregar Producto</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card" style="width: 18rem;">
+          <div class="card-body">
+            <h3 class="card-title fw-bold">Modificar Productos</h3>
+            <p class="card-text text-muted">Modificar la información de un Producto existente.</p>
+            <a href="/modificar_producto" class="btn btn-primary">Modificar Producto</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card" style="width: 18rem;">
+          <div class="card-body">
+            <h3 class="card-title fw-bold">Eliminar Producto</h3>
+            <p class="card-text text-muted">Eliminar un Producto del sistema.</p>
+            <a href="/eliminar_producto" class="btn btn-primary">Eliminar Producto</a>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- Enlaces a los archivos JS de Bootstrap -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <div class="row mt-4" id="productTableContainer">
+    <div class="col-md-12">
+      <div class="card fadeIn">
+        <div class="card-body">
+          <h5 class="card-title">Productos Registrados</h5>
+          <div class="table-responsive">
+            <table id="userTable" class="table table-bordered table-sm">
+              <thead>
+                <tr>
+                  <th>Codigo de Barras</th>
+                  <th>Nombre</th>
+                  <th>Precio</th>
+                  <th>Existencia</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Aquí se insertarán las filas de la tabla con los datos de los usuarios -->
+                {% for producto in productos %}
+                <tr>
+                  <td>{{ producto[0] }}</td>
+                  <td>{{ producto[1] }}</td>
+                  <td>{{ producto[2] }}</td>
+                  <td>{{ producto[3] }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Enlaces a los archivos JS de Bootstrap -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
-
-  
-

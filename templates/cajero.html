@@ -2,6 +2,68 @@
 
 {% block title %}Cajero{% endblock %}
 
+{% block css %}
+<style>
+    /* Estilo para el cuerpo de la página */
+    body {
+        font-family: Arial, sans-serif;
+        background: radial-gradient(circle, #10D0E7, #99E710);
+        margin: 0;
+        padding: 0;
+        color: #fff;
+        overflow: hidden;
+        /* Oculta la barra de desplazamiento */
+    }
+
+    /* Estilo para la navbar */
+    .navbar {
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Estilo para las tarjetas */
+    .card {
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s, box-shadow 0.3s;
+        background-color: #fff;
+        color: #000;
+    }
+
+    .card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-primary {
+        background-color: #10D0E7;
+        border-color: #10D0E7;
+        transition: background-color 0.2s, transform 0.2s;
+    }
+
+    .btn-primary:hover {
+        background-color: #0ca0b5;
+        transform: scale(1.05);
+    }
+
+    /* Animaciones */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .fadeIn {
+        animation: fadeIn 1s;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container my-5 mx-auto">
     <div class="row justify-content-evenly">
